@@ -1,1 +1,1 @@
-# 引き継ぎドキュメント（HANDOVER.md）
+# 引き継ぎドキュメント (HANDOVER.md)
