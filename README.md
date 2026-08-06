@@ -32,7 +32,7 @@ AIの行動規範となる最優先ルールファイル。
 
 ### スキル（`.agents/skills`）: 
 定型業務や特定作業をAIに実行（作業代行）してもらうための標準手順書（マニュアル）ファイル。
-- AIを用いた業務効率化スキルの作成を検討する際の参照記事（[https://zenn.dev/benjuwan/articles/c2ba48e7662f92](https://zenn.dev/benjuwan/articles/c2ba48e7662f92)）
+- AIを用いた業務効率化スキルの作成を検討する際の参照記事（[Microsoft 謹製 デスクトップアプリ「Skill Recorder」で業務効率化スキル（SKILL.md）の作成が捗る？](https://zenn.dev/benjuwan/articles/c2ba48e7662f92)）
 
 ### フック（`.agents/hooks`）: 
 特定フェーズ時に発動するシステム制約。これにより自動的に発動する機能を付与したり、AI制御を実現できたりする。  
