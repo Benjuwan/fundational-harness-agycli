@@ -1,22 +1,20 @@
 import sys
 import os
 import json
-import argparse  # コマンドライン引数を解析するための標準ライブラリ（スクリプト実行時にファイルパスなどの情報を渡せるようになる）
+import argparse
 
-# 許可されたサブエージェントのホワイトリスト
+# 許可されたサブエージェントのホワイトリスト。
+# 実際に .agents/agents/ 配下に定義ファイルが存在するものだけを登録する。
 ALLOWED_SUB_AGENTS = [
-    "es5931-article-data-extractor",
-    "image-processor",
+    "task-executor",
     "implementer-agent",
+    "image-processor",
     "qa-auditor",
-    "security-auditor",
-    "static-site-planner",
 ]
 
 
-# カスタムサブエージェント起動時に、当該サブエージェントを組み込みサブエージェント（`self`）へオーバーソウル（憑依）させるためのスクリプト
-# ※このスクリプトが必要となった背景情報は`../refer-doc/subagent_discovery_issue.md`に記載
-# ※フックでは実現困難な理由は`../refer-doc/antigravity-cli-hook-limitation.md`に記載
+# カスタムサブエージェント起動時に、当該サブエージェントを組み込みサブエージェント（`self`）へオーバーソウル（憑依）させるためのスクリプト。
+# ここで扱う名前は、実際に .agents/agents/ 配下に存在する定義ファイル名と一致させる。
 def generate_prompt(sub_agent_name, recent_log, user_prompt):
     if sub_agent_name not in ALLOWED_SUB_AGENTS:
         raise ValueError(
