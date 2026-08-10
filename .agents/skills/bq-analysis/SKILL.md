@@ -77,7 +77,6 @@ description: 自然言語の指示から BigQuery 用の SQL を自動構築し�
    - 閾値以下の場合も、本実行前に簡潔な確認（`y/n`）を行います。
 4. ユーザーが承認（`y`）した場合、承認された見積もりスキャン量バイト数に 20% の安全マージンを加算した値（`int(estimated_bytes * 1.2)`）と設定閾値バイト数のうち、**小さい方の値**を決定します。
    - **※BigQuery物理制限（10 MB下限ガード）**: BigQueryの仕様上 `--maximum_bytes_billed` オプションには 10 MB（`10485760` Bytes）以上を指定する必要があるため、上記で決定された値が `10485760` 未満の場合は **`10485760`（10 MB）** を物理上限バイト数（`APPROVED_MAX_BYTES`）として決定します。
-   - **※セーフティ設計の意図**: ユーザーが閾値を超える見積もりを承認した場合であっても、AIの暴走やヒューマンエラーによる課金過多を物理的に防ぐため、設定閾値（デフォルト3.0GB）を超える上限はシステムとして許容しません。
 
 ### Step 5: クエリ実行 ＆ 物理上限付与 ＆ PythonによるCSV保存 ＆ 要約提示
 1. 万が一の過剰課金を物理的に遮断するため、決定した `APPROVED_MAX_BYTES` を `--maximum_bytes_billed` オプションに指定し、JSON フォーマットでクエリを実行します（コンテキスト溢れ防止のため `--max_rows=100` を付与）:
@@ -105,10 +104,12 @@ description: 自然言語の指示から BigQuery 用の SQL を自動構築し�
    EOF
    python3 tasks/tmp/convert_json.py
    ```
-3. ユーザーの対話画面には以下を出力します:
+3. 工程2 のPython処理で保存されたCSVファイルのリネーム実施:
+   - `年月日`と`データセットID`のプレフィックスを付与（例: `[YYYYMMDD_]<Dataset ID>-ga4_analysis_output.csv`）
+4. ユーザーの対話画面には以下を出力します:
    - TOP 10〜20 件の要約マークダウンテーブル
    - 分析インサイト（結果に対する考察・アドバイス）
-   - 保存された CSV ファイルへのハイパーリンク（例: [`[YYYYMMDD_]ga4_analysis_output.csv`](tasks/tmp/ga4_analysis_output.csv)）
+   - 保存された（リネーム済み）CSV ファイルへのマークダウン記法でのハイパーリンク
 
 ## 参照ドキュメント
 詳細な GA4 スキーマ、`UNNEST` クエリ例、IAM 権限、Python 変換スクリプト詳細は [bq-analysis-reference.md](references/bq-analysis-reference.md) を参照してください。
