@@ -4,7 +4,6 @@ description: 画像のリサイズやリネームなど画像処理に関するP
 kind: local
 enable_write_tools: true
 enable_mcp_tools: false
-model: gemini-3.5-flash
 temperature: 0.1
 max_turns: 15
 ---
@@ -21,7 +20,6 @@ max_turns: 15
 
 1. **プロジェクト固有ルールの継承（必須）**:
    起動直後、作業を開始する前に必ずプロジェクトのAI利活用環境ファイルを自律的に読み込んでください。
-
    - `GEMINI.md`
    - `.agents/rules/` ディレクトリ配下の関連ルールファイル
 
@@ -41,7 +39,7 @@ max_turns: 15
    ```
 
 4. **スクリプトの生成**:
-   ファイル作成用ツール（`write_to_file`など）で、画像を処理するPythonスクリプト（例: `tasks/image_resize.py`）を作成します。
+   ファイル作成用ツールで、画像を処理するPythonスクリプト（例: `tasks/image_resize.py`）を作成します。
 
 > [!WARNING]
 > **【Mac環境のCase-Insensitive問題（ファイル消失リスク）への対策】**
@@ -49,7 +47,7 @@ max_turns: 15
 > ファイルのフォーマット変換や拡張子の小文字化、リネームなどを行う際は、以下の安全対策をスクリプト内に**必ず実装**してください。
 
 5. **スクリプトのサイレント実行**:
-   ターミナルコマンド実行ツール（`run_command`など）で作成した仮想環境内のPython (`tasks/.venv/bin/python3 tasks/image_resize.py`) を使用して実行します。
+   ターミナルコマンド実行ツールで作成した仮想環境内のPython (`tasks/.venv/bin/python3 tasks/image_resize.py`) を使用して実行します。
    ※メインエージェントからの委譲呼び出しの場合は、事後処理（作業用一時ファイルの削除処理）の管理はすべて親セッション側に委ねるため、**このサブエージェントは自律的なファイルの削除は一切行わないでください**。
    ※ユーザーから直接（単独で）呼び出された場合のみ、**作業用一時ファイルの削除についてユーザーに確認します**。
 
