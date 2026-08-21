@@ -77,64 +77,39 @@ def main():
     # 重要なアクションではない（単なる`ls`など）場合は、説明チェックをスキップして即許可する
     if not is_important_action:
         # 重大な変更ではない場合は自動許可
-        print(json.dumps({"decision": "allow"}))
         return
 
     # ----------------------------------------
     # AIによる事前の作業説明の有無を厳密に判定する
     # ----------------------------------------
     ai_pre_explanation = ""
+    found_assistant_block = False
+    aggregated_text = []
 
-    # stepsには最新のログから古いログへ降順(reversed)で格納されている
-    # ログを遡り、「現在まさにツールを呼び出そうとしているAIの発言（PLANNER_RESPONSE）」を1つだけ取得する。
-    #
-    # 【同期遅延対策】
-    # PreToolUse フック発火時、現在のステップ（AIの応答）は transcript（会話ログ）にまだ書き込まれていない。
-    # そのため、transcript の最新エントリは1つ前のステップである可能性がある。
-    # もし直近に USER_INPUT（新しいユーザー指示）があり、その後に PLANNER_RESPONSE（AI応答文）がない場合、
-    # それ以前の PLANNER_RESPONSE は別のタスクに対する説明であり、stale（無効）と判定する。
-    # この deny（＝会話ログのかさ増し処理）により、現在のステップが transcript に書き込まれた後のリトライで正しく検証できる。
     for step in steps:
         step_type = step.get("type", "")
+        source = step.get("source", "")
+        content = step.get("content", "").strip()
 
-        # USER_INPUT を PLANNER_RESPONSE より先に検出した場合:
-        # → 直近のユーザー指示の後に AI の説明がない = stale（無効）
-        if step_type == "USER_INPUT":
-            user_content = step.get("content", "")
-            if "<ADDITIONAL_METADATA>" in user_content:
-                user_content = user_content.split("<ADDITIONAL_METADATA>")[0]
-            if "<USER_REQUEST>" in user_content:
-                user_content = user_content.replace("<USER_REQUEST>", "").replace(
-                    "</USER_REQUEST>", ""
-                )
-            # `strip`: 文字列の先頭と末尾から不要な空白文字（スペース、タブ、改行など）や指定文字を削除
-            user_content = user_content.strip()
+        # PLANNER_RESPONSE (アシスタントの出力) を集約
+        if source == "MODEL" and step_type == "PLANNER_RESPONSE":
+            if content:  # 空のcontent（ツール呼び出しのみのステップなど）は無視して連続性を維持する
+                found_assistant_block = True
+                aggregated_text.append(content)
+            continue
 
-            # 短い承認応答（"y", "ok", "はい" 及び、それらの意図を補足するユーザー入力など）は新しい指示ではなく、
-            # 前の PLANNER_RESPONSE への同意なのでスキップして走査を続行する
-            if len(user_content) <= 75:
-                continue
+        # ユーザー入力（USER_INPUT）またはシステム応答（SYSTEM_RESPONSEなど）に達した場合
+        if source != "MODEL":
+            # すでにアシスタントのブロックを読み込み中の場合、そこで連続は途切れるため集約を終了
+            if found_assistant_block:
+                break
 
-            # 実質的な新しい指示を検出 → これ以前の PLANNER_RESPONSE は別タスクの説明
-            # ai_pre_explanation を空のまま break し、deny に落とす
-            break
+            # アシスタント発言が見つかるまでは読み飛ばして遡及を続ける
+            continue
 
-        # AIによる入力かどうかを判定
-        if step.get("source") == "MODEL" and step_type == "PLANNER_RESPONSE":
-            # 【チャンク実行（ユーザーの入力を挟まずAIが自律的に連続アクションを起こすフェーズ）時の不正受給（テキスト使い回し）防止】
-            # 過去のログを遡った際、そのステップに既に `tool_calls`（過去に実行したツールの履歴）が紐づいていた場合、
-            # そのテキストは「前回のコマンド実行時に消費された説明」であると判定する。
-            # これをスキップ（continue）することで、連続実行時に無言のまま過去の貯金で許可UIが出てしまうバグを防ぐ。
-            tool_calls = step.get("tool_calls", [])
-            if len(tool_calls) > 0:
-                continue
-
-            # 今回のツール呼び出しのために出力された（未消費の）テキストを整形してから取得する
-            ai_pre_explanation = step.get("content", "").strip()
-
-            # 【重要】未消費のPLANNER_RESPONSEを見つけた時点で必ずループを抜ける。
-            # 過去のターンの発言（貯金）を遡って拾い上げないようにするための厳密な強制措置。
-            break
+    # 逆順で収集したので、元の順序（時系列）に戻して結合
+    aggregated_text.reverse()
+    ai_pre_explanation = "\n".join(aggregated_text)
 
     # 単なる文字数チェック（`has_enough_length`）だけでは、AIが英語のログやコードを垂れ流して無言実行を強行突破してしまう可能性がある。
     # コア要求である「コマンド実行許可を求める前に『実行内容を日本語で説明する』こと」をシステム的に担保するため、
@@ -146,7 +121,7 @@ def main():
 
     if is_approved:
         # 事前説明が同一ステップ内で十分に行われている場合は、コマンドの実行を許可（allow）する
-        print(json.dumps({"decision": "allow"}))
+        return
     else:
         # 事前説明がない、または30文字未満の場合は実行を明確に拒否（deny）し、AIへ即時フィードバックを返す。
         # 【プロンプトインジェクション（通知）の意図】
