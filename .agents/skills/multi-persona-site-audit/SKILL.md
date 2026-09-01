@@ -1,6 +1,6 @@
 ---
 name: multi-persona-site-audit
-description: Playwright系ツール（`playwright-mcp`）で既存の公開サイトを実際に操作し、複数ペルソナ視点で証拠接地型（事実ベース）のヒューリスティック監査を行い、優先度付きのサイト改善仮説を提供する監査・診断スキル。分析の詳細ゴールが未確定な段階でも使える「入口／とっかかり」ツール。「/multi-persona-site-audit」というコマンドが入力された場合に呼び出されます。
+description: Playwright系ツール（`playwright-mcp`）で既存の公開サイトを実際に操作し、複数ペルソナ視点で証拠接地型（事実ベース）のヒューリスティック監査を行い、優先度付きのサイト改善仮説を提供する監査・診断スキル。分析の詳細ゴールが未確定な段階でも使える「入口／とっかかり」ツール。「/multi-persona-site-audit」というコマンドが入力された場合や、ユーザーから「サイトを監査して」「UIレビューして」「Webサイトを診断して」などの指示があった時に呼び出されます。
 ---
 
 # 多ペルソナ・サイト監査スキル (multi-persona-site-audit)
@@ -116,6 +116,7 @@ description: Playwright系ツール（`playwright-mcp`）で既存の公開サ�
 
 - **サブエージェント複数起動は y/n 事前承認が必要**（[`subagent-policy.md`](../../rules/subagent-policy.md)）。HITL（[`hitl-policy.md`](../../rules/hitl-policy.md)）を最上位命令として遵守する。
 - 成果物（スクリーンショット・レポート）は **`tasks/[サイト名]-audit-report/` 配下に格納し、レポート内の画像リンク切れを防ぐ**こと。ルートや他ディレクトリへの配置は禁止。
+- なお、[`workflow.md`](../../rules/workflow.md) では作業ファイルを `tasks/[project]/tmp/` 配下に限定する規約があるが、本スキルの成果物は監査レポートとして永続的に残す性質上、`tasks/[サイト名]-audit-report/`（永続ディレクトリ）へ格納することを **意図的な例外** として扱う。
 - 各サブエージェントに **Artifact ログ（`tasks/[サイト名]-audit-report/[SubagentName]_ARTIFACTS.md`）を義務付け**（[subagent-brief-template.md](references/subagent-brief-template.md) に明記）。
 - タスク完了後は **不要になった一時ファイル（`ARTIFACTS.md`など）・サブエージェントをクリーンアップ**（削除前にユーザーへ対象提示 → y）。**成果物ディレクトリ（`tasks/[サイト名]-audit-report/`）自体やレポート・キャプチャ画像は削除せず残す**こと。破壊的操作は [`hitl-policy.md`](../../rules/hitl-policy.md) の認知的チェックポイントを遵守する。
 - 提供ツール（`playwright-mcp`）を活用し、**車輪の再発明（自己流スクリプト）を禁止**する。
