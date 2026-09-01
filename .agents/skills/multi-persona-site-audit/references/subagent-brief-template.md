@@ -18,6 +18,7 @@
 - 報告・思考・出力はすべて日本語で行うこと。
 - `GEMINI.md` および `.agents/rules/` の各種ルールを遵守すること（特に HITL 事前承認・破壊的操作ポリシー）。
 - ブラウザ操作は `playwright-mcp`（Playwright系ツール）を用いること。自己流スクリプト（車輪の再発明）は禁止。
+  ※`playwright-mcp` が起動不能な場合は、推測でスキップせず、**代替ツールへ自律的に切り替えず**、その事実をメインエージェントへエスカレーションして指示を仰ぐこと（フォールバック手段の採否はメイン側が判断する。`.agents/rules/troubleshooting.md` §5 準拠）。
 
 ## 1. 例外（保護）リスト — 触れてはならない
 - .env 系（環境変数）、秘密鍵（`*.pem`, `id_rsa` 等）、`.git/`、`GEMINI.md`、`~/.gemini/antigravity-cli/settings.json`。
