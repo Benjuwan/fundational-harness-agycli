@@ -6,10 +6,11 @@ import argparse
 # 許可されたサブエージェントのホワイトリスト。
 # 実際に .agents/agents/ 配下に定義ファイルが存在するものだけを登録する。
 ALLOWED_SUB_AGENTS = [
-    "task-executor",
-    "implementer-agent",
+    "handwritten-doc-extractor",
     "image-processor",
+    "implementer-agent",
     "qa-auditor",
+    "task-executor",
 ]
 
 
