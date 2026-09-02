@@ -34,6 +34,12 @@ AIの行動規範となる最優先ルールファイル。
 定型業務や特定作業をAIに実行（作業代行）してもらうための標準手順書（マニュアル）ファイル。
 - AIを用いた業務効率化スキルの作成を検討する際の参照記事（[Microsoft 謹製 デスクトップアプリ「Skill Recorder」で業務効率化スキル（SKILL.md）の作成が捗る？](https://zenn.dev/benjuwan/articles/c2ba48e7662f92)）
 
+#### サードパーティ（第三者作成）スキル
+- [`.agents/skills/grill-with-docs`](https://github.com/mattpocock/skills)   
+`grill-with-docs`は、計画や設計についてAIが人間に質問をしてくれるスキル。内部的には質問攻めを担当する[`grilling`](.agents/skills/grilling)と、用語や ADR（Architecture Decision Record: アーキテクチャに関する重要な意思決定の記録文書） の文書化を担当する[`domain-modeling`](.agents/skills/domain-modeling)の2つのスキルを同時に起動する（両スキルとも同じサードパーティ元）。  
+一気に大量の質問をしてくるのではなく、論点を1つ1つ質問してきて、推奨の回答も用意してくれるので答えやすい。成果物として`CONTEXT.md`に対象ドメインの用語を残してくれたり、ADR用のドキュメントを残してくれたりする。  
+grill（厳しく尋問するという意味らしい）という名前のとおり、曖昧な部分が残っている限り質問が止まらず、すべての論点に答え終わってはじめて完了となる。対話が終わる頃には詳細な実装計画が作成できるだけの情報が整う。
+
 ### フック（`.agents/hooks`）: 
 特定フェーズ時に発動するシステム制約。これにより自動的に発動する機能を付与したり、AI制御を実現できたりする。  
 ※フックの設定に関しては[`hook-setup-guide.md`](./refer-doc/hook-setup-guide.md)に詳細を記載しています。本リポジトリのフック（`.agents/hooks`）を設定する場合（初期設定時）は、AIに「`./refer-doc/hook-setup-guide.md`を参照して`.agents/hooks`内にある各種フックの設定を行って」とプロンプト入力すれば済むと思います。
