@@ -118,7 +118,7 @@ BigQuery 内のデータを参照し、分析クエリを実行するために�
 #### 【管理者向け】権限の付与手順
 依頼を受けた管理者は、以下の手順で対象者に権限を付与してください。
 1. [Google Cloud Console](https://console.cloud.google.com/) の「`IAM と管理`」>「`IAM`」を開きます。
-  - ※デフォルトでは画面上部にある「`許可`タブ」が選択状態になっていて、その隣りにある「`許可しない`（Deny）タブ」を選択すると拒否ポリシー（※参照記事: [BigQuery × AI で 300 万円溶かそう](https://qiita.com/na0/items/e7eb24f896749fd3f190) に記載ある*CREATE CAPACITY は IAM 拒否ポリシーで bigquery.capacityCommitments.create 権限を拒否*する）設定が行える。ただし拒否ポリシー設定の権限（`iam.denypolicies.create`）がない場合もあるので注意。
+   - ※デフォルトでは画面上部にある「`許可`タブ」が選択状態になっていて、その隣りにある「`許可しない`（Deny）タブ」を選択すると拒否ポリシー（※参照記事: [BigQuery × AI で 300 万円溶かそう](https://qiita.com/na0/items/e7eb24f896749fd3f190) に記載ある*CREATE CAPACITY は IAM 拒否ポリシーで bigquery.capacityCommitments.create 権限を拒否*する）設定が行える。ただし拒否ポリシー設定の権限（`iam.denypolicies.create`）がない場合もあるので注意。
 2. 「`アクセスを許可`」をクリックし、設定画面を表示します。
 3. 表示された設定画面で、「新しいプリンシパル」に依頼者のメールアドレスを入力します。
 4. 「`ロール`」から **`BigQuery データ閲覧者`** と **`BigQuery ジョブユーザー`** の2つのロールを選択し、「`保存`」をクリックします。
@@ -247,9 +247,9 @@ GA4 のデータは膨大なため、予期せぬ課金やセキュリティ事�
    - 生成される SQL は単一の `SELECT` または `WITH ... SELECT` で始まるクエリのみを許可します。
    - **マルチステートメントの禁止**: セミコロン（`;`）による複数クエリの結合はバイパス対策のため一切禁止します。
    - **DML/DDL の自動却下（単語境界チェック）**: 大文字・小文字を区別せず（Case-Insensitive）、単語境界（`\b`）を考慮し、`\bDROP\b`, `\bDELETE\b`, `\bUPDATE\b`, `\bINSERT\b`, `\bMERGE\b`, `\bCREATE\b`, `\bALTER\b`, `\bTRUNCATE\b`, `\bGRANT\b`, `\bREVOKE\b` 等が含まれる場合は自動的に実行を却下します（※`updated_at` 等のカラム名・リテラルとの誤検知を防止）。
-   - **BigQuery AI/ML 推論関数の自動却下**: `AI.GENERATE`（`AI.GENERATE_BOOL`/`AI.GENERATE_DOUBLE`/`AI.GENERATE_INT`/`AI.GENERATE_TABLE`/`AI.GENERATE_TEXT`/`AI.GENERATE_EMBEDDING` 等のサフィックス付き関数を含む）、`AI.FORECAST`、`AI.IF`、`AI.CLASSIFY`、`AI.SCORE`、`AI.AGG`、`AI.EMBED`、`ML.GENERATE`（`ML.GENERATE_TEXT`/`ML.GENERATE_EMBEDDING` 等のサフィックス付き関数を含む）、`ML.PREDICT`、`ML.FORECAST` 等の関数は、通常の DML/DDL チェックをすり抜けて `SELECT` 文内から行単位でリモートLLM/MLモデルを直接呼び出せてしまう上、呼び出し元とは別プロジェクトで高額なフロンティアモデルが無制限に実行されうる重大なコストリスクを伴うため、`\bAI\.GENERATE`, `\bAI\.FORECAST\b`, `\bAI\.IF\b`, `\bAI\.CLASSIFY\b`, `\bAI\.SCORE\b`, `\bAI\.AGG\b`, `\bAI\.EMBED\b`, `\bML\.GENERATE`, `\bML\.PREDICT\b`, `\bML\.FORECAST\b` のプレフィックス一致パターン（`AI.GENERATE`と`ML.GENERATE`は末尾に単語境界`\b`を課さないことで、`_TEXT`等のサフィックス付き関数名も確実に検出する）で検出した場合は同様に自動的に実行を却下します。
-2. **SQLコメント（`--`, `/- */`, `#`）の全面禁止**
-   - ガードレール判定（`_TABLE_SUFFIX` の有無や DML キーワードのチェック）をコメントアウトで回避するバイパス攻撃を防ぐため、生成クエリ内での SQL コメント（`--`, `/- */`, `#`）の利用を完全に禁止します。
+   - **`AI.` / `ML.` 名前空間関数・`EXTERNAL_QUERY` の自動却下**: DML/DDL チェックをすり抜けて外部モデル・APIを行単位で呼び出します。課金は BigQuery のバイト課金とは別建てで外部サービスから直接請求されるため、Dry-Run にも `--maximum_bytes_billed` にも現れません。本項の判定は大小文字を無視し、空白（改行・タブ含む）とバッククォートを除去したうえで `(AI|ML)\.[A-Za-z_]+\(` / `EXTERNAL_QUERY\(` に一致したら却下します。**単語境界 `\b` は付けません**（空白除去で直前トークンと連結するため `\b` を課すと全て素通りし、逆に `\(` を省くと `openai.com` 等を誤拒否します）。
+2. **SQLコメント（`--`, `/* */`, `#`）の全面禁止**
+   - ガードレール判定（`_TABLE_SUFFIX` の有無や DML キーワードのチェック）をコメントアウトで回避するバイパス攻撃を防ぐため、生成クエリ内での SQL コメント（`--`, `/* */`, `#`）の利用を完全に禁止します。
 3. **シェルインジェクション防止（ファイル経由実行 ＆ 変数サニタイズ）**
    - 生成された SQL を直接コマンドライン引数に渡すとシェル文字（`;`, `$()`, ``` `` ``` 等）によるインジェクションリスクが発生するため、必ず一度 `tasks/tmp/query.sql` に安全に書き出し、`bq query --use_legacy_sql=false < tasks/tmp/query.sql` で実行します。
    - コマンド引数に含まれる `<LOCATION>` や `<PROJECT_ID>` などの変数も半角英数字・ハイフンに制限・サニタイズします。
@@ -269,7 +269,7 @@ GA4 のデータは膨大なため、予期せぬ課金やセキュリティ事�
          total_bytes = None  # パース失敗時は安全側に倒して「スキャン量不明」として確認を求める
      ```
 6. **動的承認値に基づく `--maximum_bytes_billed` の物理遮断**
-   - 万が一ドライランの判定漏れが発生した場合でも BigQuery 側で物理的に超過課金を防ぐため、承認された見積もりスキャンサイズに 20% の安全マージンを加算した値（`int(estimated_bytes * 1.2)`）と設定上限値のうち**小さい方の値**を物理上限バイト数 (`APPROVED_MAX_BYTES`) として決定し、`--maximum_bytes_billed=<APPROVED_MAX_BYTES>` で強制付与します。
+   - **スキャンバイト課金にのみ作用**（AI/ML・外部API課金には無効）。万が一ドライランの判定漏れが発生した場合でも BigQuery 側で物理的に超過課金を防ぐため、承認された見積もりスキャンサイズに 20% の安全マージンを加算した値（`int(estimated_bytes * 1.2)`）と設定上限値のうち**小さい方の値**を物理上限バイト数 (`APPROVED_MAX_BYTES`) として決定し、`--maximum_bytes_billed=<APPROVED_MAX_BYTES>` で強制付与します。
 7. **Python による JSON 結果の CSV 安全変換**
    - ターミナルでのフォーマット不整合（JSON と CSV 拡張子の矛盾）を解消するため、`bq query --format=prettyjson` の結果を JSON ファイルに保存後、Python スクリプトにて CSV ファイル（`tasks/tmp/ga4_analysis_output.csv`）へ変換・保存します。
    ```python
