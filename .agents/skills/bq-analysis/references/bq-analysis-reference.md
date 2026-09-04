@@ -118,9 +118,32 @@ BigQuery 内のデータを参照し、分析クエリを実行するために�
 #### 【管理者向け】権限の付与手順
 依頼を受けた管理者は、以下の手順で対象者に権限を付与してください。
 1. [Google Cloud Console](https://console.cloud.google.com/) の「`IAM と管理`」>「`IAM`」を開きます。
+  - ※デフォルトでは画面上部にある「`許可`タブ」が選択状態になっていて、その隣りにある「`許可しない`（Deny）タブ」を選択すると拒否ポリシー（※参照記事: [BigQuery × AI で 300 万円溶かそう](https://qiita.com/na0/items/e7eb24f896749fd3f190) に記載ある*CREATE CAPACITY は IAM 拒否ポリシーで bigquery.capacityCommitments.create 権限を拒否*する）設定が行える。ただし拒否ポリシー設定の権限（`iam.denypolicies.create`）がない場合もあるので注意。
 2. 「`アクセスを許可`」をクリックし、設定画面を表示します。
 3. 表示された設定画面で、「新しいプリンシパル」に依頼者のメールアドレスを入力します。
 4. 「`ロール`」から **`BigQuery データ閲覧者`** と **`BigQuery ジョブユーザー`** の2つのロールを選択し、「`保存`」をクリックします。
+
+#### 任意のメールアドレスにアクセス権を付与・管理する際の仕様と前提条件
+Google Cloud のプロジェクトに対して、`IAM（Identity and Access Management）`機能を利用し、任意のメールアドレスにアクセス権を付与・管理する際の仕様と前提条件は以下になります。
+
+##### 1. 任意のメールアドレスに対するアクセス管理
+プロジェクトの「オーナー」または「IAM 管理者」権限を持つユーザーは、IAM設定画面から以下の操作を柔軟かつ一元的に行うことが可能です。
+
+- Gmail以外のメールアドレスへの付与:  独自ドメイン（会社のメールアドレスなど）を含む、任意のメールアドレスを「プリンシパル（その権限をもらって何かをする側/処理実行者）」として指定し、アクセス権を付与することができます。
+- 役割に応じた適切な権限（ロール）の割り当て:  プロジェクト全体の操作権限を与えるだけでなく、「BigQueryのデータ閲覧・操作のみ」といった、目的に応じた特定の機能（ロール）だけをピンポイントで付与できます。
+- アクセス権のコントロール:  作業が必要なタイミングでアクセス権を許可し、不要になったら速やかにアクセス権を削除するといった管理が可能です。
+
+> [!WARNING]
+> - 【重要】対象メールアドレスの前提条件  
+> 任意のメールアドレスに権限を付与し、実際に Google Cloud の機能を利用させるためには、**Google アカウントとしての登録・連携が必須（※1）**となります。Google Cloud を利用する際にログイン認証を行うため単なるメールアドレスではなく、Googleの認証基盤を通れる状態になっている必要があるためです。  
+> ※1: 追加するメールアドレスが、Google アカウント（または Google Workspace / Cloud Identity アカウント）として事前に作成・紐付けられている状態
+
+##### 2. 権限範囲に関する注意点（Google Cloudと連携元サービスの違い）
+Google Cloud 側で権限を付与したからといって、データ連携元サービスのアクセス権まで付与されるわけではありません。これらは分けて管理する必要があります。
+
+- Google Cloudの権限で「できること」:  （例）IAM で「BigQuery ユーザー」のロールを付与した場合、対象者は Google Cloud（BigQuery）にログインし、蓄積されたデータを直接操作・分析できます。
+- Google Cloud の権限では「できないこと」:  （例）Google Cloud 側で権限を与えても、データ連携元である GA4 自体の管理画面や標準レポート画面を閲覧できるようにはなりません。GA4側の閲覧・操作もさせたい場合は、別途GA4の管理画面からユーザー追加を行う必要があります。  
+※詳細は[事前確認1: GA4のBigQueryエクスポート設定が完了しているか](#事前確認1-ga4のbigqueryエクスポート設定が完了しているか)を参照してください。
 
 ## 3. スキルの起動と分析の実行フロー
 必要な権限設定が完了したらAIアシスタントにデータ分析を依頼できます。本スキルは以下のフローで進行します。
@@ -224,6 +247,7 @@ GA4 のデータは膨大なため、予期せぬ課金やセキュリティ事�
    - 生成される SQL は単一の `SELECT` または `WITH ... SELECT` で始まるクエリのみを許可します。
    - **マルチステートメントの禁止**: セミコロン（`;`）による複数クエリの結合はバイパス対策のため一切禁止します。
    - **DML/DDL の自動却下（単語境界チェック）**: 大文字・小文字を区別せず（Case-Insensitive）、単語境界（`\b`）を考慮し、`\bDROP\b`, `\bDELETE\b`, `\bUPDATE\b`, `\bINSERT\b`, `\bMERGE\b`, `\bCREATE\b`, `\bALTER\b`, `\bTRUNCATE\b`, `\bGRANT\b`, `\bREVOKE\b` 等が含まれる場合は自動的に実行を却下します（※`updated_at` 等のカラム名・リテラルとの誤検知を防止）。
+   - **BigQuery AI/ML 推論関数の自動却下**: `AI.GENERATE`（`AI.GENERATE_BOOL`/`AI.GENERATE_DOUBLE`/`AI.GENERATE_INT`/`AI.GENERATE_TABLE`/`AI.GENERATE_TEXT`/`AI.GENERATE_EMBEDDING` 等のサフィックス付き関数を含む）、`AI.FORECAST`、`AI.IF`、`AI.CLASSIFY`、`AI.SCORE`、`AI.AGG`、`AI.EMBED`、`ML.GENERATE`（`ML.GENERATE_TEXT`/`ML.GENERATE_EMBEDDING` 等のサフィックス付き関数を含む）、`ML.PREDICT`、`ML.FORECAST` 等の関数は、通常の DML/DDL チェックをすり抜けて `SELECT` 文内から行単位でリモートLLM/MLモデルを直接呼び出せてしまう上、呼び出し元とは別プロジェクトで高額なフロンティアモデルが無制限に実行されうる重大なコストリスクを伴うため、`\bAI\.GENERATE`, `\bAI\.FORECAST\b`, `\bAI\.IF\b`, `\bAI\.CLASSIFY\b`, `\bAI\.SCORE\b`, `\bAI\.AGG\b`, `\bAI\.EMBED\b`, `\bML\.GENERATE`, `\bML\.PREDICT\b`, `\bML\.FORECAST\b` のプレフィックス一致パターン（`AI.GENERATE`と`ML.GENERATE`は末尾に単語境界`\b`を課さないことで、`_TEXT`等のサフィックス付き関数名も確実に検出する）で検出した場合は同様に自動的に実行を却下します。
 2. **SQLコメント（`--`, `/- */`, `#`）の全面禁止**
    - ガードレール判定（`_TABLE_SUFFIX` の有無や DML キーワードのチェック）をコメントアウトで回避するバイパス攻撃を防ぐため、生成クエリ内での SQL コメント（`--`, `/- */`, `#`）の利用を完全に禁止します。
 3. **シェルインジェクション防止（ファイル経由実行 ＆ 変数サニタイズ）**
@@ -277,3 +301,4 @@ GA4 のデータは膨大なため、予期せぬ課金やセキュリティ事�
 - [GA4 BigQuery エクスポート スキーマ公式リファレンス](https://support.google.com/analytics/answer/7029846?hl=ja)
 - [GA4 BigQuery サンプルクエリ集（Google公式）](https://developers.google.com/analytics/devguides/collection/ga4/bigquery_export?hl=ja)
 - [BigQuery コスト最適化のベストプラクティス](https://cloud.google.com/bigquery/docs/best-practices-costs?hl=ja)
+- [BigQuery × AI で 300 万円溶かそう](https://qiita.com/na0/items/e7eb24f896749fd3f190)
