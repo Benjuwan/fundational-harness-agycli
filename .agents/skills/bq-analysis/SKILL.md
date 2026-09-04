@@ -41,7 +41,7 @@ description: 自然言語の指示から BigQuery 用の SQL を自動構築し�
    - `SELECT` または `WITH ... SELECT` で始まる単一クエリのみを許可。
    - **セミコロン（`;`）を含めることを禁止**（マルチステートメントバイパス防止）。
    - DML/DDL キーワード（`\bDROP\b`, `\bDELETE\b`, `\bUPDATE\b`, `\bINSERT\b`, `\bMERGE\b`, `\bCREATE\b`, `\bALTER\b`, `\bTRUNCATE\b`, `\bGRANT\b`, `\bREVOKE\b` 等）が**大文字・小文字を区別せず（Case-Insensitive）**独立単語として含まれる場合は**絶対に実行せず拒否**する（※単語境界 `\b` を考慮し `updated_at` 等のカラム名誤検知を防止）。
-   - **BigQuery AI/ML 推論関数の禁止**: `AI.GENERATE`（`AI.GENERATE_BOOL`/`AI.GENERATE_DOUBLE`/`AI.GENERATE_INT`/`AI.GENERATE_TABLE`/`AI.GENERATE_TEXT`/`AI.GENERATE_EMBEDDING` 等のサフィックス付き関数を含む）、`AI.FORECAST`、`AI.IF`、`AI.CLASSIFY`、`AI.SCORE`、`AI.AGG`、`AI.EMBED`、`ML.GENERATE`（`ML.GENERATE_TEXT`/`ML.GENERATE_EMBEDDING` 等のサフィックス付き関数を含む）、`ML.PREDICT`、`ML.FORECAST` 等の関数は `SELECT` 文内から行単位でリモートLLM/MLモデルを呼び出し可能で、かつ呼び出し元とは別プロジェクトの高額なモデル課金・無制限実行につながる重大なコストリスクがあるため、`\bAI\.GENERATE`, `\bAI\.FORECAST\b`, `\bAI\.IF\b`, `\bAI\.CLASSIFY\b`, `\bAI\.SCORE\b`, `\bAI\.AGG\b`, `\bAI\.EMBED\b`, `\bML\.GENERATE`, `\bML\.PREDICT\b`, `\bML\.FORECAST\b` のプレフィックス一致パターン（`AI.GENERATE`と`ML.GENERATE`は末尾に単語境界`\b`を課さないことで、`_TEXT`等のサフィックス付き関数名も確実に検出する）で検出した場合は同様に**絶対に実行せず拒否**する。
+   - **`AI.` / `ML.` 名前空間関数と `EXTERNAL_QUERY` の禁止**: 外部モデル・APIを行単位で呼び出し、その課金は Dry-Run 見積もりにも `--maximum_bytes_billed` にも現れないため拒否する。本項の判定は大小文字を無視し、空白（改行・タブ含む）とバッククォートを除去した文字列に対して `(AI|ML)\.[A-Za-z_]+\(` / `EXTERNAL_QUERY\(` で行う（**単語境界 `\b` は付けない**。空白除去で直前トークンと連結し `\b` が消滅するため）。
 2. **SQLコメント（`--`, `/* */`, `#`）の禁止**:
    - ガードレール回避バイパス（条件無効化など）を防ぐため、生成する SQL にいかなるコメント（`--`, `/* */`, `#`）を含めることも禁止する。
 3. **`SELECT *` の禁止**: カラムは必要なもの（例: `event_date`, `event_name` 等）のみ明示的に指定。
