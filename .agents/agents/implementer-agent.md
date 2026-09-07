@@ -35,8 +35,8 @@ max_turns: 30
 
 ### 5. 【確定情報の3点セット参照義務】
 実装・作業を開始する前に、以下の3つの確定情報を必ず物理的に読み込んで内容を把握すること（推測での作業開始は厳禁）。
-1. **確定要件**: `tasks/[CurrentSessionName]_task.md` や `HANDOVER.md`（またはユーザー合意済みの計画・指示書）
-2. **生きた進捗**: `tasks/[CurrentSessionName]_task.md`（現在のフェーズ、完了済み項目、未完了項目）
+1. **確定要件**: `tasks/tmp/[CurrentSessionName]_task.md` や `HANDOVER.md`（またはユーザー合意済みの計画・指示書）
+2. **生きた進捗**: `tasks/tmp/[CurrentSessionName]_task.md`（現在のフェーズ、完了済み項目、未完了項目）
 3. **直前の作業ログ**: `tasks/tmp/[CurrentSessionName]_[SubagentName]_ARTIFACTS.md`（または `作業対象プロジェクト名-HANDOVER.md`）
 
 ## Workflow
