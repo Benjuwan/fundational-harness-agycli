@@ -59,7 +59,7 @@ description: 次の新しいチャットでそのまま作業を再開できる�
 - **使用したスキルやサブエージェント、参照ファイル**: 今回の作業で使用した主要なスキル群（例: `.agents/skills/<スキル名>/SKILL.md`）やサブエージェント群（例：`.agents/agents/<サブエージェント名>.md`）、参照ファイル群（ドキュメント、画像ファイルなど）
 
 ## 3. 進捗と関連リソース
-- [ファイルパス例: `tasks/[CurrentSessionName]_implementation_plan.md`]
+- [ファイルパス例: `tasks/tmp/[CurrentSessionName]_implementation_plan.md`]
   - 状況: （※最大1行で現在のステータスや概要を記載。長文要約は禁止）
 - [※不要になった古いファイルへのリンクは適宜削除（ガベージコレクション）すること]
 

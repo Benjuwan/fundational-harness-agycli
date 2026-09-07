@@ -90,7 +90,7 @@ AIが一度に大量のスライドを生成すると、1ページあたりの�
 4. **【ユーザーからの修正指示への対応とアーティファクト運用の徹底】**:  
    - ユーザーから修正指示を受け取った際、AIは**作業着手前に必ず以下の文言をユーザーへ宣言**してください。
       - 「これより修正作業に入ります。`implementer-agent` サブエージェントに修正作業を移譲しますが『勝手な関連修正は行わず、指示箇所のみを修正』するよう明確に伝達します。修正後は、`qa-auditor` サブエージェントを用いて厳格に検証を行います」  
-   - 宣言後、直ちにプロジェクト固有ルール（`workflow.md`）や実装計画書（`tasks/[CurrentSessionName]_implementation_plan.md`）に規定されたチェックリスト（`tasks/[CurrentSessionName]_task.md` など）を[アーティファクト](../../rules/workflow.md#2-プランモードと事前チェックリストの策定)として生成し、プランモードの運用を開始してください。
+   - 宣言後、直ちにプロジェクト固有ルール（`workflow.md`）や実装計画書（`tasks/tmp/[CurrentSessionName]_implementation_plan.md`）に規定されたチェックリスト（`tasks/tmp/[CurrentSessionName]_task.md` など）を[アーティファクト](../../rules/workflow.md#2-プランモードと事前チェックリストの策定)として生成し、プランモードの運用を開始してください。
       1. **修正作業は必ず `implementer-agent` サブエージェントに移譲して**ください。
       2. **修正完了後の完了判定（検証）は必ず `qa-auditor`（専用検証サブエージェント）に移譲して**ください。※メインエージェント自身での自己検証（目視確認）は禁止とします。
       - ※権限エラーなどにより `implementer-agent`, `qa-auditor` が利用できない場合は、[`workflow.md`のサブエージェントの運用基準](../../rules/workflow.md)に則ったフォールバックを実施すること。
