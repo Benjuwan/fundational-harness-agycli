@@ -90,7 +90,7 @@ description: Playwright系ツール（`playwright-mcp`）で既存の公開サ�
 - 各ペルソナを **1体ずつ逐次起動**する（専用のサブエージェント型は無いため汎用的な組み込みサブエージェントを用いる。[`workflow.md`](../../rules/workflow.md) 第2アプローチ準拠）。**常に1ペルソナのみがブラウザを操作** し、開始時にセッションをリセットする（`browser_close` 後の `browser_navigate <開始URL>` 等でセッションをリセット。具体手順は [observation-protocol.md](references/observation-protocol.md) 2）。
 - **タスクシナリオ＋観測プロトコル**（[observation-protocol.md](references/observation-protocol.md)）に従って操作し、**証拠（スクリーンショット / DOM / 操作手順 / 詰まった箇所）を持ち帰る**（"感想"でなく"証拠"）。
 - 各サブエージェントへ渡す指令書は [subagent-brief-template.md](references/subagent-brief-template.md) の雛形を用いる（ルール継承漏れ・文脈汚染の防止）。
-- 各サブエージェントは Artifact ログ（`tasks/[サイト名]-audit-report/[SubagentName]_ARTIFACTS.md`）に成果物・変更パス・スクリーンショット保存先を追記する。
+- 各サブエージェントは Artifact ログ（`tasks/[サイト名]-audit-report/[CurrentSessionName]_[SubagentName]_ARTIFACTS.md`）に成果物・変更パス・スクリーンショット保存先を追記する。
 - ブラウザ操作は `playwright-mcp`（Playwright系ツール）を用い、**自己流スクリプト（車輪の再発明）を禁止**する。
 
 ### Phase 2: 統合（メインエージェント）
@@ -117,8 +117,8 @@ description: Playwright系ツール（`playwright-mcp`）で既存の公開サ�
 - **サブエージェント複数起動は y/n 事前承認が必要**（[`subagent-policy.md`](../../rules/subagent-policy.md)）。HITL（[`hitl-policy.md`](../../rules/hitl-policy.md)）を最上位命令として遵守する。
 - 成果物（スクリーンショット・レポート）は **`tasks/[サイト名]-audit-report/` 配下に格納し、レポート内の画像リンク切れを防ぐ**こと。ルートや他ディレクトリへの配置は禁止。
 - なお、[`workflow.md`](../../rules/workflow.md) では作業ファイルを `tasks/[project]/tmp/` 配下に限定する規約があるが、本スキルの成果物は監査レポートとして永続的に残す性質上、`tasks/[サイト名]-audit-report/`（永続ディレクトリ）へ格納することを **意図的な例外** として扱う。
-- 各サブエージェントに **Artifact ログ（`tasks/[サイト名]-audit-report/[SubagentName]_ARTIFACTS.md`）を義務付け**（[subagent-brief-template.md](references/subagent-brief-template.md) に明記）。
-- タスク完了後は **不要になった一時ファイル（`ARTIFACTS.md`など）・サブエージェントをクリーンアップ**（削除前にユーザーへ対象提示 → y）。**成果物ディレクトリ（`tasks/[サイト名]-audit-report/`）自体やレポート・キャプチャ画像は削除せず残す**こと。破壊的操作は [`hitl-policy.md`](../../rules/hitl-policy.md) の認知的チェックポイントを遵守する。
+- 各サブエージェントに **Artifact ログ（`tasks/[サイト名]-audit-report/[CurrentSessionName]_[SubagentName]_ARTIFACTS.md`）を義務付け**（[subagent-brief-template.md](references/subagent-brief-template.md) に明記）。
+- タスク完了後は **不要になった一時ファイル（`[CurrentSessionName]_[SubagentName]_ARTIFACTS.md`など）・サブエージェントをクリーンアップ**（削除前にユーザーへ対象提示 → y）。**成果物ディレクトリ（`tasks/[サイト名]-audit-report/`）自体やレポート・キャプチャ画像は削除せず残す**こと。破壊的操作は [`hitl-policy.md`](../../rules/hitl-policy.md) の認知的チェックポイントを遵守する。
 - 提供ツール（`playwright-mcp`）を活用し、**車輪の再発明（自己流スクリプト）を禁止**する。
 
 ## 8. 参照ドキュメント（references/）
