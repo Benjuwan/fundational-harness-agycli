@@ -56,7 +56,7 @@
 - 最終報告は本ブリーフの各項目を満たしたことを確認したうえで返すこと。
 
 ## 7. 物理ログによる状態管理（Artifact Log Protocol）
-- 作業ログを `tasks/[サイト名]-audit-report/<SubagentName>_ARTIFACTS.md` に追記（Append）すること。
+- 作業ログを `tasks/[サイト名]-audit-report/<CurrentSessionName>_<SubagentName>_ARTIFACTS.md` に追記（Append）すること。
 - 記録内容: 生成/保存したファイル（スクリーンショットのパス含む）、操作したページ一覧、一時ディレクトリ。
 - 成果物（スクリーンショットなど）は `tasks/[サイト名]-audit-report/` 配下限定で保存すること（ルートや他ディレクトリへの配置は禁止）。
 ```

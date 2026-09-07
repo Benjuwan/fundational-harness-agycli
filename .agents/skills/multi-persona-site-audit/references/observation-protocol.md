@@ -36,7 +36,7 @@
 
 > [!NOTE]
 > スクリーンショットの `filename` は必ず作業ディレクトリ配下（**`tasks/[サイト名]-audit-report/`** 配下限定）に保存すること。保存先は Artifact ログに追記する。また、`scale` 引数には一貫性保持のため `"css"` を指定することを推奨する。
-> ※Artifact ログ自体のパス（`tasks/[サイト名]-audit-report/[SubagentName]_ARTIFACTS.md`）は `subagent-policy.md` 7-1 の規約に準拠する（本スキルからは変更しない）。
+> ※Artifact ログ自体のパス（`tasks/[サイト名]-audit-report/[CurrentSessionName]_[SubagentName]_ARTIFACTS.md`）は `subagent-policy.md` 7-1 の規約に準拠する（本スキルからは変更しない）。
 
 ### リサイズ処理の検知・反映プロトコル（必須遵守）
 
@@ -89,4 +89,4 @@
 1. 実行したタスクの手順ログ（開始URL → 操作 → 到達/詰まり）。
 2. 各指摘に紐づく証拠（スクリーンショットのファイルパス／DOM抜粋／ログ抜粋のいずれか）。
 3. 接地できなかった推測には免責ラベル。
-4. Artifact ログ（`tasks/[サイト名]-audit-report/[SubagentName]_ARTIFACTS.md`）への成果物・スクリーンショット保存先・操作ページ一覧の追記。
+4. Artifact ログ（`tasks/[サイト名]-audit-report/[CurrentSessionName]_[SubagentName]_ARTIFACTS.md`）への成果物・スクリーンショット保存先・操作ページ一覧の追記。

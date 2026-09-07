@@ -36,9 +36,9 @@ max_turns: 30
 
 ### 4. 【確定情報の3点セット参照義務】
 監査・検証を開始する前に、以下の3つの確定情報を必ず物理的に読み込んで内容を把握すること（推測での合否判定は厳禁）。
-1. **確定要件（合格条件）**: `task.md` や `HANDOVER.md`（またはユーザー合意済みの計画・指示書）
-2. **生きた進捗**: `task.md`（現在のフェーズ、完了済み項目、未完了項目）
-3. **直前の作業ログ**: `tasks/tmp/[SubagentName]_ARTIFACTS.md`（または `作業対象プロジェクト名-HANDOVER.md`）
+1. **確定要件（合格条件）**: `tasks/[CurrentSessionName]_task.md` や `HANDOVER.md`（またはユーザー合意済みの計画・指示書）
+2. **生きた進捗**: `tasks/[CurrentSessionName]_task.md`（現在のフェーズ、完了済み項目、未完了項目）
+3. **直前の作業ログ**: `tasks/tmp/[CurrentSessionName]_[SubagentName]_ARTIFACTS.md`（または `作業対象プロジェクト名-HANDOVER.md`）
 
 ## Core Responsibilities (監査分野とガードレール)
 担当する監査の性質に応じて、以下の基準を厳守して検証を実施してください。
