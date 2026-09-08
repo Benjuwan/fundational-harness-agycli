@@ -18,7 +18,7 @@
 - 報告・思考・出力はすべて日本語で行うこと。
 - `GEMINI.md` および `.agents/rules/` の各種ルールを遵守すること（特に HITL 事前承認・破壊的操作ポリシー）。
 - ブラウザ操作は `playwright-mcp`（Playwright系ツール）を用いること。自己流スクリプト（車輪の再発明）は禁止。
-  ※`playwright-mcp` が起動不能な場合は、推測でスキップせず、**代替ツールへ自律的に切り替えず**、その事実をメインエージェントへエスカレーションして指示を仰ぐこと（フォールバック手段の採否はメイン側が判断する。`.agents/rules/troubleshooting.md` §5 準拠）。
+  ※`playwright-mcp` が起動不能な場合は、推測でスキップせず、**代替ツールへ自律的に切り替えず**、その事実をメインエージェントへエスカレーションして指示を仰ぐこと（フォールバック手段の採否はメイン側が判断する。`.agents/rules/troubleshooting.md` 5 準拠）。
 
 ## 1. 例外（保護）リスト — 触れてはならない
 - .env 系（環境変数）、秘密鍵（`*.pem`, `id_rsa` 等）、`.git/`、`GEMINI.md`、`~/.gemini/antigravity-cli/settings.json`。
@@ -56,7 +56,7 @@
 - 最終報告は本ブリーフの各項目を満たしたことを確認したうえで返すこと。
 
 ## 7. 物理ログによる状態管理（Artifact Log Protocol）
-- 作業ログを `tasks/[サイト名]-audit-report/<CurrentSessionName>_<SubagentName>_ARTIFACTS.md` に追記（Append）すること。
+- 作業ログを `tasks/[サイト名]-audit-report/[CurrentSessionName]_[SubagentName]_ARTIFACTS.md` に追記（Append）すること。
 - 記録内容: 生成/保存したファイル（スクリーンショットのパス含む）、操作したページ一覧、一時ディレクトリ。
 - 成果物（スクリーンショットなど）は `tasks/[サイト名]-audit-report/` 配下限定で保存すること（ルートや他ディレクトリへの配置は禁止）。
 ```
