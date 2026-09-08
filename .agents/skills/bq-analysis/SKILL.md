@@ -11,7 +11,7 @@ description: 自然言語の指示から BigQuery 用の SQL を自動構築し�
 ## ワークフロー (処理シーケンス)
 
 ### Step 1: 初期化・設定参照 ＆ バリデーション
-1. `tasks/tmp/` ディレクトリが存在しない場合は作成します。
+1. `tasks/tmp/` ディレクトリが存在しない場合は作成（`mkdir -p tasks/tmp/`）します。
 2. `tasks/tmp/bq_analysis_config.json` の存在を確認します。
    - 存在しない場合（初回）: ユーザーに以下のフォーマットで情報入力を促し、入力された情報を `tasks/tmp/bq_analysis_config.json` に保存します（デフォルト安全閾値 `max_scan_gb_threshold: 3.0` を含む）。
 ```
