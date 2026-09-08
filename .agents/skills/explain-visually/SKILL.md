@@ -94,7 +94,7 @@ python3 .agents/skills/explain-visually/scripts/verify_page.py tasks/[プロジ�
 - 図が横に広がりすぎて読めない
 - 表の列幅が偏っている
 
-補助: `verify_page.py` が Chrome 不在などで実行できない場合は、代替手段として `playwright-mcp` でページを開いてスクリーンショットを取得し、目視確認してもよい。
+補助: `verify_page.py` が Chrome 不在などで実行できない場合は、代替手段としてブラウザ操作ツールでページを開いてスクリーンショットを取得し、目視確認してもよい。
 
 ### 5. 開く
 

@@ -82,7 +82,7 @@ flowchart TD
 1. ユーザーに「検証サブエージェント（`qa-auditor`）による生文字起こしの原本突き合わせ監査を開始します。よろしいですか？ (y/n)」と確認する。
 2. 承認後、検証専用サブエージェント（`@qa-auditor`）をオーバーソウルアプローチ（`utils/generate_subagent_prompt.py`）で起動して、視覚的突合監査を行わせる。
    - **ミッション・ブリーフ（指示内容）**:
-     - 原本画像パス（`tasks/digital-shift/tmp/images/page_XX.png`）と生文字起こしパス（`tasks/digital-shift/tmp/raw/raw_page_XX.md`）を `view_file` で読み込むこと。
+     - 原本画像パス（`tasks/digital-shift/tmp/images/page_XX.png`）と生文字起こしパス（`tasks/digital-shift/tmp/raw/raw_page_XX.md`）をファイル確認機能で読み込むこと。
      - 画像上の手書き文字とテキストを照合し、「誤読」「欠落」「勝手な補完（ハルシネーション）」がないかを監査すること。
      - 合否判定（`PASS` / `FAIL`）と指摘事項を出力すること。
 3. `FAIL` の指摘があった場合は、`handwritten-doc-extractor` に修正指示を出して再監査を行い、`PASS` を取得するまで繰り返す。
