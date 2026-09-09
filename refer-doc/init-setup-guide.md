@@ -40,15 +40,52 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
   ...,
   "permissions": {
     "allow": [
-      "command(git)",
-      "command(npm test)"
+      "mcp(context7/*)",
+      "mcp(playwright/*)",
+      "command(npm test.*)",
+      "command(npm run .*)",
+      "command(git diff)",
+      "command(git status)",
+      "unsandboxed(git status)",
+      "unsandboxed(git diff)",
+      "unsandboxed(git log.*)",
+      "command(rm tasks/.*)",
+      "read_file(*)"
     ],
     "deny": [
-      "command(rm -rf)",
-      "command(rm)",
-      "command(git push --force)",
-      "command(git reset --hard)",
-      "command(git clean)"
+      "command(sudo)",
+      "command(sudo .*)",
+      "command(rm -rf.*)",
+      "command(rm -r.*)",
+      "command(rm -fr.*)",
+      "command(git push.*)",
+      "command(git reset --hard.*)",
+      "command(git clean.*)",
+      "command(git checkout .)",
+      "command(git restore .)",
+      "read_file(/Users/ユーザー名/.ssh)",
+      "read_file(/Users/ユーザー名/.aws)",
+      "read_file(/Users/ユーザー名/.gnupg)",
+      "read_file(/Users/ユーザー名/Desktop/プロジェクト名/.env)",
+      "read_file(/Users/ユーザー名/Desktop/プロジェクト名/.dev.vars)",
+      "write_file(/Users/ユーザー名/.ssh)",
+      "write_file(/Users/ユーザー名/.aws)",
+      "write_file(/Users/ユーザー名/.gnupg)",
+      "write_file(/Users/ユーザー名/Desktop/プロジェクト名/.env)",
+      "write_file(/Users/ユーザー名/Desktop/プロジェクト名/.dev.vars)"
+    ],
+    "ask": [
+      "write_file(*)",
+      "unsandboxed(*)",
+      "command(rmdir .*)",
+      "command(git worktree .*)",
+      "command(git rebase .*)",
+      "command(git restore .*)",
+      "command(git checkout -- .*)",
+      "command(git stash drop .*)",
+      "command(git stash clear .*)",
+      "command(git branch -D .*)",
+      "command(git branch -d .*)"
     ]
   },
   ...
@@ -59,6 +96,7 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
 > **権限設定 (`permissions`) の考え方**
 > - **`allow`**: ユーザーの都度確認なしでAIが自律実行できる安全なコマンドを指定します。
 > - **`deny`**: ユーザーが指示や承認を出した場合でも、**AIに実行を固く禁止（ガード）するコマンド**を指定します。
+> - ※`git`などエンジニア向け関連の記述が一部含まれているのは将来の拡張性を加味してです。
 
 > [!TIP]
 > **モデル選定指針 (Pro vs Flash の使い分け)**
