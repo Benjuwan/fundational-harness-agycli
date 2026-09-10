@@ -1,15 +1,11 @@
-# Antigravity CLI（および Antigravity IDE）用の汎用ハーネス
-このリポジトリ（`fundational-harness-agycli`）は、一般ビジネスユーザー（ナレッジワーカー）が日常業務でAIエージェント（[Antigravity CLI](https://antigravity.google/product/antigravity-cli)または
-[Antigravity IDE](https://antigravity.google/product/antigravity-ide)）を安全かつ効率的に活用するための「汎用的なルール・スキル・サブエージェント」のファイルセット（ハーネス）です。  
+# Antigravity CLI 用の汎用ハーネス
+このリポジトリ（`fundational-harness-agycli`）は、一般ビジネスユーザー（ナレッジワーカー）が日常業務でAIエージェント（[Antigravity CLI](https://antigravity.google/product/antigravity-cli)）を安全かつ効率的に活用するための「汎用的なルール・スキル・サブエージェント」のファイルセット（ハーネス）です。  
 `fundational-harness`という名前の通り、**化粧のファンデーション（下地）と同じように「当リポジトリを下地にして各組織（企業）や各人用にカスタマイズ」してもらう想定**です。
-
-> [!NOTE]
-> ※単体エージェントのみの Antigravity IDE ではサブエージェントによる並列作業/コンテキストの負荷軽減が行えないので基本的には Antigravity CLI を推奨します。
 
 ---
 
 - [Antigravity CLI 公式ドキュメント](https://antigravity.google/docs/cli/overview)
-- [Antigravity IDE 公式ドキュメント](https://antigravity.google/docs/ide/overview)
+- ※[VS Code](https://code.visualstudio.com/): IDEは任意。必要に応じて
 
 ## 法人向けプラン（Google Workspace: 組織アカウント経由のGemini）と違って、個人の有料アカウント（Google AI Pro など）ではオプトアウトしても学習利用（情報漏えい）のリスクがある
 仕事用・学校用のGoogleアカウント（Workspace）経由で使う場合は個人向けとは別の規約が適用され、法人向けプランはデフォルトで入力データが外部の生成AIモデル学習に使われない（オプトアウト設定）運用になっており、人間のレビュアーによる監視も行われません。  

@@ -1,29 +1,20 @@
-# Antigravity CLI / IDE 初期セットアップガイド
+# Antigravity CLI 初期セットアップガイド
 本ドキュメントは、ナレッジワーカー（非エンジニアを含む）が生成AIアシスタント環境「Antigravity」を安全かつスムーズに導入し、業務において自律的かつ高精度に運用するための必須初期セットアップ手順をまとめたガイドです。
 
 ## 1. はじめに
 生成AIを単なる「一問一答のチャットツール」としてではなく、業務を安全かつ自律的に支援する「AIパートナー（ハーネス環境）」として活用するためには、セキュリティ設定・権限管理・外部ツール連携（MCP）・行動ルールやスキルの整備が不可欠です。
 
 ## 2. ステップ1: 必要なツールの準備
-Antigravity 関連ツールには複数の種類が存在します。業務の自動化やコード・文書作成においては、用途に合わせて **Antigravity CLI** と **Antigravity IDE** を準備します。
+Antigravity 関連ツールには複数の種類が存在します。業務の自動化やコード・文書作成においては、ターミナル上で高度な自律処理を行う **Antigravity CLI** を準備します。
 
 ### ツールごとの特徴と使い分け
 
 | ツール名 | 主な特徴と用途 | 推奨されるユースケース |
 | :--- | :--- | :--- |
 | **Antigravity CLI** | ターミナル上で動作する高機能エージェント環境。専門サブエージェントの独立並列起動、コンテキストの保護・分岐コマンド（`/btw`, `/fork`など）に対応。 | 複雑な多段階タスク、バックグラウンド処理、独立した分業・検証作業 |
-| **Antigravity IDE** | VSCodeフォークベースのエージェントファーストIDE。Gemini Code Assist 標準搭載で、単一の画面上でファイル編集とチャットを完結可能。 | インタラクティブなコード編集、ファイルのリアルタイムプレビュー・調整 |
-
-> [!NOTE]
-> **サブエージェントの動作に関する重要事項**
-> Antigravity IDE 単体では、CLIのような「別プロセスでの独立したサブエージェント起動」は行えず、メインチャット内でのロールプレイ（文脈の消費）となります。コンテキストの節約や専門役割の並列処理を行いたい場合は、**Antigravity CLI（`agy` コマンド）の利用が推奨**されます。
 
 ### インストール方法
-1. **Antigravity CLI のインストール**
-   公式サイトの [Antigravity CLI ダウンロードページ](https://antigravity.google/download#antigravity-cli) からインストールします。
-
-2. **Antigravity IDE のダウンロード**
-   公式サイトの [Antigravity IDE ダウンロードページ](https://antigravity.google/download#antigravity-ide) からアプリケーションをダウンロードしてインストールします。
+公式サイトの [Antigravity CLI ダウンロードページ](https://antigravity.google/download#antigravity-cli) からインストールします。
 
 ## 3. ステップ2: 必須初期設定
 
@@ -50,7 +41,8 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "unsandboxed(git diff)",
       "unsandboxed(git log.*)",
       "command(rm tasks/.*)",
-      "read_file(*)"
+      "read_file(*)",
+      "write_file(tasks/)"
     ],
     "deny": [
       "command(sudo)",
@@ -75,7 +67,6 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "write_file(/Users/ユーザー名/Desktop/プロジェクト名/.dev.vars)"
     ],
     "ask": [
-      "write_file(*)",
       "unsandboxed(*)",
       "command(rmdir .*)",
       "command(git worktree .*)",

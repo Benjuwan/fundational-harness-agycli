@@ -29,11 +29,11 @@ Antigravity CLI の実行ループ（モデル呼び出し前、ツール実行�
      - **Windows**: `python C:/絶対パス/.agents/hooks/スクリプト名.py`
 4. CLIを再起動することで、設定が有効化されます。
 
-## 3. （参考）設定ファイル（`hooks.json`）による一括設定
-一括で設定したい場合や設定内容を直接確認したい場合は、グローバルの `hooks.json` を編集します。
+## 3. （参考）設定ファイル（`hooks.json`）による一括設定 = 作ったHookの有効化
+一括で設定したい場合や設定内容を直接確認したい場合は**グローバルの `hooks.json`**を編集します。
 
 > [!IMPORTANT]
-> **設定ファイルの配置場所**
+> - **設定ファイル（`hooks.json`）の配置場所**  
 > プロジェクト内の `.agents/hooks.json` ではなく、**OSユーザーディレクトリ配下のグローバル設定ファイル**に記述する必要があります。
 > - **Windows**: `C:/Users/ユーザー名/.gemini/config/hooks.json`
 > - **Mac / Linux**: `/Users/ユーザー名/.gemini/config/hooks.json`
