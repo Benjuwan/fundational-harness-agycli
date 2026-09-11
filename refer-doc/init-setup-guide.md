@@ -40,7 +40,6 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "unsandboxed(git status)",
       "unsandboxed(git diff)",
       "unsandboxed(git log.*)",
-      "command(rm tasks/.*)",
       "read_file(*)",
       "write_file(tasks/)"
     ],
@@ -48,7 +47,6 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "command(sudo)",
       "command(sudo .*)",
       "command(rm -rf.*)",
-      "command(rm -r.*)",
       "command(rm -fr.*)",
       "command(git push.*)",
       "command(git reset --hard.*)",
@@ -68,6 +66,7 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
     ],
     "ask": [
       "unsandboxed(*)",
+      "command(rm -r.*)",
       "command(rmdir .*)",
       "command(git worktree .*)",
       "command(git rebase .*)",

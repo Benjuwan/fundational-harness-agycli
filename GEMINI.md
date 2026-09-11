@@ -9,6 +9,9 @@
 - **長時間の作業後、または新しいタスクへ移行する場合**: [`cognitive-refresh.md`](.agents/rules/cognitive-refresh.md) を参照。
 - **文書の作成・大幅な修正・レビューを行う場合**: [`output-quality-guidelines.md`](.agents/rules/output-quality-guidelines.md) を参照。
 
+> [!IMPORTANT]
+> 本プロジェクトには [`pre-command-check.py`](.agents/hooks/pre-command-check.py) フックが導入されています。**コマンド実行、サブエージェント起動、ワークツリーの出入りを呼び出す前に、同一ターン内で「これから行う操作内容を日本語で（30文字以上）説明」しない場合、フックが実行を強制ブロック**します。無言のツール実行は禁止です。
+
 ## 2. タスク実行における最重要原則（安全と品質の担保）
 ユーザーが求めているのは、単なる作業スピードではなく「正確で安全、かつ意図に沿った堅実なアウトプット」です。
 
