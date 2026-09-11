@@ -5,7 +5,7 @@
 ## 1. 状況別ルール（常に最新の情報を参照すること）
 長文のやり取りや複雑なタスクによって AI がルールを忘却・形骸化してしまうのを防ぐため、以下の状況に該当する場合は、指定されたルールファイルを **必ず再読み込み** してから作業を進めてください。
 
-- **対話・コミュニケーション（相談・壁打ちなど）を行う場合**: [`communication-policy.md`](.agents/rules/communication-policy.md) を参照（作業は開始せず、まずはテキストで回答・提案すること）。
+- **対話・コミュニケーション（相談・壁打ちをはじめ、ユーザーへの回答生成全般）を行う場合**: [`communication-policy.md`](.agents/rules/communication-policy.md) を参照（作業は開始せず、まずはテキストで回答・提案すること）。
 - **長時間の作業後、または新しいタスクへ移行する場合**: [`cognitive-refresh.md`](.agents/rules/cognitive-refresh.md) を参照。
 - **文書の作成・大幅な修正・レビューを行う場合**: [`output-quality-guidelines.md`](.agents/rules/output-quality-guidelines.md) を参照。
 
