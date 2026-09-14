@@ -33,8 +33,6 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
     "allow": [
       "mcp(context7/*)",
       "mcp(playwright/*)",
-      "command(npm test.*)",
-      "command(npm run .*)",
       "command(git diff)",
       "command(git status)",
       "unsandboxed(git status)",
@@ -42,7 +40,7 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "unsandboxed(git log.*)",
       "read_file(/Users/ユーザー名/Desktop/プロジェクト名/**)",
       "write_file(/Users/ユーザー名/Desktop/プロジェクト名/tasks/**)",
-      "command(regex:.*tasks/.*)"
+      "command(regex:python tasks/.*)"
     ],
     "deny": [
       "command(sudo)",
@@ -120,7 +118,7 @@ MCPは、AIエージェントが外部ツールやブラウザ、データベー
       "command": "npx",
       "args": [
         "-y",
-        "@context7/mcp@latest"
+        "@upstash/context7-mcp"
       ]
     }
   }
