@@ -40,8 +40,9 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "unsandboxed(git status)",
       "unsandboxed(git diff)",
       "unsandboxed(git log.*)",
-      "read_file(*)",
-      "write_file(tasks/)"
+      "read_file(/Users/ユーザー名/Desktop/プロジェクト名/**)",
+      "write_file(/Users/ユーザー名/Desktop/プロジェクト名/tasks/**)",
+      "command(regex:.*tasks/.*)"
     ],
     "deny": [
       "command(sudo)",
@@ -243,7 +244,7 @@ APIキーの漏洩による予期せぬ課金トラブルを防止するため�
 ## 6. 補足: フック（Hooks）の設定
 
 ### フック（Hooks）の概要
-フックとは、Antigravity CLI の実行ループ（モデルへのプロンプト送信前 `PreInvocation` やツール実行前 `PreToolUse` など）の特定のタイミングで、自動的にカスタムスクリプトを呼び出す拡張機能です。AIが無言でコマンドを実行しようとした際にブロックして事前説明を求める（事前承認 HITL の強制）など、高度な安全制御を実現できます。
+フックとは、Antigravity CLI の実行ループ（モデルへのプロンプト送信前 `PreInvocation` など）の特定のタイミングで、自動的にカスタムスクリプトを呼び出す拡張機能です。コンテキスト圧縮時に最優先ルールを自動で動的再注入したり、会話ログからセッション切り替えを促す警告を出力するなど、高度な自律制御や品質担保を実現できます。
 
 ### 詳しい設定方法
 フックの登録手順、OSごとのコマンド指定（Mac: `python3` / Windows: `python`）、同梱スクリプトの詳細については、以下のガイドを参照してください。
