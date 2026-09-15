@@ -26,21 +26,22 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
 
 ```json
 {
-  ...,
+  "allowNonWorkspaceAccess": true,
   "enableTerminalSandbox": true,
-  ...,
+  "notifications": true,
   "permissions": {
     "allow": [
       "mcp(context7/*)",
       "mcp(playwright/*)",
+      "command(npm test.*)",
+      "command(npm run .*)",
       "command(git diff)",
       "command(git status)",
-      "unsandboxed(git status)",
-      "unsandboxed(git diff)",
-      "unsandboxed(git log.*)",
-      "read_file(/Users/ユーザー名/Desktop/プロジェクト名/**)",
-      "write_file(/Users/ユーザー名/Desktop/プロジェクト名/tasks/**)",
-      "command(regex:python tasks/.*)"
+      "read_file(C:/Users/ユーザー名/Desktop/プロジェクト名/)",
+      "write_file(C:/Users/ユーザー名/Desktop/プロジェクト名/)",
+      "command(regex:python tasks/.*)",
+      "command(regex:pytest tasks/.*)",
+      "command(regex:node tasks/.*)"
     ],
     "deny": [
       "command(sudo)",
@@ -52,32 +53,25 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "command(git clean.*)",
       "command(git checkout .)",
       "command(git restore .)",
-      "read_file(/Users/ユーザー名/.ssh)",
-      "read_file(/Users/ユーザー名/.aws)",
-      "read_file(/Users/ユーザー名/.gnupg)",
-      "read_file(/Users/ユーザー名/Desktop/プロジェクト名/.env)",
-      "read_file(/Users/ユーザー名/Desktop/プロジェクト名/.dev.vars)",
-      "write_file(/Users/ユーザー名/.ssh)",
-      "write_file(/Users/ユーザー名/.aws)",
-      "write_file(/Users/ユーザー名/.gnupg)",
-      "write_file(/Users/ユーザー名/Desktop/プロジェクト名/.env)",
-      "write_file(/Users/ユーザー名/Desktop/プロジェクト名/.dev.vars)"
+      "read_file(C:/Users/ユーザー名/.ssh)",
+      "read_file(C:/Users/ユーザー名/.aws)",
+      "read_file(C:/Users/ユーザー名/.gnupg)",
+      "read_file(C:/Users/ユーザー名/Desktop/プロジェクト名/.env)",
+      "read_file(C:/Users/ユーザー名/Desktop/プロジェクト名/.dev.vars)",
+      "write_file(C:/Users/ユーザー名/.ssh)",
+      "write_file(C:/Users/ユーザー名/.aws)",
+      "write_file(C:/Users/ユーザー名/.gnupg)",
+      "write_file(C:/Users/ユーザー名/Desktop/プロジェクト名/.env)",
+      "write_file(C:/Users/ユーザー名/Desktop/プロジェクト名/.dev.vars)"
     ],
     "ask": [
       "unsandboxed(*)",
       "command(rm -r.*)",
       "command(rmdir .*)",
-      "command(git worktree .*)",
-      "command(git rebase .*)",
-      "command(git restore .*)",
-      "command(git checkout -- .*)",
-      "command(git stash drop .*)",
-      "command(git stash clear .*)",
-      "command(git branch -D .*)",
-      "command(git branch -d .*)"
     ]
   },
-  ...
+  "runningLightSpeed": "fast",
+  "toolPermission": "proceed-in-sandbox"
 }
 ```
 
@@ -239,12 +233,25 @@ APIキーの漏洩による予期せぬ課金トラブルを防止するため�
 > **サブエージェント起動時の運用注意点**
 > CLIの仕様上、カスタムサブエージェント名で直接起動するとツール権限が制限される現象（ツール剥奪トラップ）が発生します。そのため、全ツールを継承する組み込みの `self` エージェント（`TypeName: "self"`）に対し、`utils/generate_subagent_prompt.py` スクリプト等で作成した専門定義プロンプトをインジェクション（憑依）させて起動する運用を推奨しています。詳細な手順については [**AIハーネス構築・カスタマイズガイド**](./harness-customization-guide.md) を参照してください。
 
-## 6. 補足: フック（Hooks）の設定
+## 6. 補足: 
 
-### フック（Hooks）の概要
+### 6-a: フック（Hooks）の設定 / フック（Hooks）の概要
 フックとは、Antigravity CLI の実行ループ（モデルへのプロンプト送信前 `PreInvocation` など）の特定のタイミングで、自動的にカスタムスクリプトを呼び出す拡張機能です。コンテキスト圧縮時に最優先ルールを自動で動的再注入したり、会話ログからセッション切り替えを促す警告を出力するなど、高度な自律制御や品質担保を実現できます。
 
-### 詳しい設定方法
-フックの登録手順、OSごとのコマンド指定（Mac: `python3` / Windows: `python`）、同梱スクリプトの詳細については、以下のガイドを参照してください。
-
+#### 詳しい設定方法
+フックの登録手順、OSごとのコマンド指定（Mac: `python3` / Windows: `python`）、同梱スクリプトの詳細については、以下のガイドを参照してください。  
 👉 [**フック（Hooks）初期設定・運用ガイド**](./hook-setup-guide.md)
+
+#### ステータスラインの設定について  
+[Antigravity CLI でコンテキスト使用率などの情報をステータスラインに表示する方法](https://zenn.dev/benjuwan/articles/96639c465ac232)で詳細な設定を記述しています。  
+記事内の情報ソースは[antigravity-cli リポジトリ](https://github.com/google-antigravity/antigravity-cli/tree/main)内の[`statusline.sh`](https://github.com/google-antigravity/antigravity-cli/blob/main/examples/statusline/statusline.sh)ページです。
+
+#### 任意： キーバインド設定（ショートカットキー変更）
+Antigravity CLI を利用する際のキーバインド設定を管理するファイルです。
+- `~/.gemini/antigravity-cli/keybindings.json`: 以下はサブエージェントの承認ダイアログで使用するコマンドのキーバインド上書き例
+```json
+{
+  "subagent.approve_fast": ["ctrl+k"],
+  "subagent.jump_to_waiting": ["alt+j"],
+}
+```
