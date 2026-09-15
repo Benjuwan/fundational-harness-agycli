@@ -242,16 +242,34 @@ APIキーの漏洩による予期せぬ課金トラブルを防止するため�
 フックの登録手順、OSごとのコマンド指定（Mac: `python3` / Windows: `python`）、同梱スクリプトの詳細については、以下のガイドを参照してください。  
 👉 [**フック（Hooks）初期設定・運用ガイド**](./hook-setup-guide.md)
 
-#### ステータスラインの設定について  
+#### ステータスラインの設定について
 [Antigravity CLI でコンテキスト使用率などの情報をステータスラインに表示する方法](https://zenn.dev/benjuwan/articles/96639c465ac232)で詳細な設定を記述しています。  
 記事内の情報ソースは[antigravity-cli リポジトリ](https://github.com/google-antigravity/antigravity-cli/tree/main)内の[`statusline.sh`](https://github.com/google-antigravity/antigravity-cli/blob/main/examples/statusline/statusline.sh)ページです。
 
-#### 任意： キーバインド設定（ショートカットキー変更）
-Antigravity CLI を利用する際のキーバインド設定を管理するファイルです。
-- `~/.gemini/antigravity-cli/keybindings.json`: 以下はサブエージェントの承認ダイアログで使用するコマンドのキーバインド上書き例
+### 任意： キーバインド設定（ショートカットキー変更）について
+Antigravity CLI 利用時のキーバインド設定ファイルです。
+
+- **設定ファイル**: `~/.gemini/antigravity-cli/keybindings.json`:  サブエージェント利用時の承認ダイアログコマンド（ショートカットキー）
 ```json
 {
   "subagent.approve_fast": ["ctrl+k"],
-  "subagent.jump_to_waiting": ["alt+j"],
+  "subagent.jump_to_waiting": ["alt+j"]
 }
 ```
+
+> [!WARNING]
+> **記述・保存時の注意点**:
+> - **カンマ（`,`）の扱い**: 要素間の区切りには必須ですが、**末尾カンマ（Trailing Comma）は構文エラーになるため禁止**です。
+> - **文字コード**: UTF-8 BOM が混入するとパースエラーになるため、必ず **BOM なし UTF-8** で保存してください。
+> - **設定反映**: 起動時のみ読み込まれるため CLI の再起動が必要です（リセットはファイル削除後に `/keybindings` を実行）。
+
+> [!IMPORTANT]
+> **VSCode 統合ターミナル利用時の必須設定（キー横取り回避）**:
+> - **必要な理由**: VSCode ではデフォルトで **`Ctrl+K` がショートカット（Chord 待機キー）として横取り**され、CLI の即時承認にキーストロークが届きません。
+> - **対処法**: VSCode の `settings.json`（ワークスペースの `.vscode/settings.json` または `Ctrl+Shift+P` → `Preferences: Open User Settings (JSON)`）に以下を追記し、ウィンドウを再読み込みしてください。
+>   ```json
+>   {
+>     "terminal.integrated.sendKeybindingsToShell": true,
+>     "terminal.integrated.allowChords": false
+>   }
+>   ```
