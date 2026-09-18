@@ -12,6 +12,7 @@ description: 手書きのメモ・資料・契約書・議事録・アンケー�
 
 - **事前承認（HITL）の必須化**: 各フェーズの開始前、コマンド実行前、およびサブエージェント起動前には、必ずユーザーへ作業内容と対象ファイルを提示し、「y（はい）」の承認を得てから実行すること。
 - **作業ディレクトリの分離**: 作業ファイルは `tasks/digital-shift/` 配下で管理する。存在しない場合はユーザー承認を得て作成し、対象PDFの配置を依頼すること。
+- **素材ごとの出力分離**: 出力パスには素材ラベル（対象PDFごとの識別名）を挟み、複数素材を処理する際のファイル名衝突を防ぐ。以下のパス表記中の `<label>` は素材ラベルに置き換えること。
 - **仮想環境の完全分離**: 画像変換（`pdf2image`）等で非標準ライブラリを使用する際は、必ず `tasks/digital-shift/.venv` 内で完結させ、ホスト環境を汚染しないこと。
 - **実行環境（OS）への適応**: コマンド実行例は macOS/Linux 向けに記載されています。Windows 環境で実行する場合は、`python3` を `python`、仮想環境パスの `.venv/bin/` を `.venv/Scripts/` に読み替えて実行すること。
 - **原本準拠の原則（推測・要約・編纂の完全禁止）**: 不鮮明な文字や略字をAIの自己判断で勝手に補完・創作することは厳禁。
@@ -20,7 +21,8 @@ description: 手書きのメモ・資料・契約書・議事録・アンケー�
   - 推測可能だが確証なし: `[要確認: 〇〇？]`
   - 取り消し線・抹消: `[抹消線: 〇〇]`
   - 欄外追記・メモ: `[欄外追記: 〇〇]`
-  - 図・イラスト・矢印: `[図/イラスト: 概要説明]`
+  - 図・イラスト・矢印、および他の4種に当てはまらない非手書き要素・イレギュラー要素（印刷物のロゴ・製品名・既製の罫線など）: `[図/イラスト: 概要説明]`
+  - **書式は全マーカー共通で `[種別]` または `[種別: 補足]` の2形式を許容する**。`[判読不能]` も補足が必要な場合は `[判読不能: 〇〇]`（例: `[判読不能: 赤インクの掠れにより字形の特定不可]`）と記載してよい。ただし補足は必ずマーカー内に収め、マーカー外に地の文を書かないこと。また補足欄であっても、判読できない文字を推測で補完することは原本準拠の原則により禁止する（記載できるのは位置・インク色・状態などの客観的事実のみ）。
 - **自己検証の禁止と独立第三者検証の徹底**: メインエージェント単独での完了判定を禁止し、必ず検証サブエージェント（`qa-auditor`）による画像突き合わせ監査とPASS判定を得ること。
 
 ## ワークフロー
@@ -54,18 +56,21 @@ flowchart TD
      ```bash
      tasks/digital-shift/.venv/bin/python3 .agents/skills/digital-shift/references/convert_pdf_to_images.py \
        --pdf "tasks/digital-shift/対象ファイル.pdf" \
-       --output-dir "tasks/digital-shift/tmp/images" \
+       --output-dir "tasks/digital-shift/tmp/images/<label>" \
        --dpi 300 --format png
      ```
+   - 出力される画像のファイル名は `page_001.png` 形式（3桁ゼロ埋め）となる。後続フェーズで生成するファイル名もこの桁数に合わせること。
+   - ページサイズが大きい素材ではDPIが自動的に引き下げられ、`[WARN]` が出力される。
 
 ### フェーズ 2: P1 生文字起こし (Raw Transcript)
 1. ユーザーに「特化型サブエージェント（`handwritten-doc-extractor`）による生文字起こしを開始します。よろしいですか？ (y/n)」と確認する。
 2. 承認後、画像ごとに特化型カスタムサブエージェント（`@handwritten-doc-extractor`）を呼び出し、原本忠実な生文字起こしを実行させる。
    - **サブエージェントへの指示内容**:
-     - `image_path`: `tasks/digital-shift/tmp/images/page_XX.png`
-     - `output_path`: `tasks/digital-shift/tmp/raw/raw_page_XX.md`
+     - `image_path`: `tasks/digital-shift/tmp/images/<label>/page_001.png`
+     - `output_path`: `tasks/digital-shift/tmp/raw/<label>/raw_page_001.md`
      - `mode`: `"raw"`
      - `document_type`: 文書種別（手書きメモ、契約書等）
+     - 判読が難しい箇所は `tasks/digital-shift/.venv` の Pillow で該当領域を切り出して拡大し、確認すること（画像は読み込み時に長辺2000pxへ縮小される）。
 3. 全ページの生文字起こしファイルが出力されたことを確認する。
 
 ### フェーズ 3: 中間スクリーニング（機械的自動検査）
@@ -82,7 +87,7 @@ flowchart TD
 1. ユーザーに「検証サブエージェント（`qa-auditor`）による生文字起こしの原本突き合わせ監査を開始します。よろしいですか？ (y/n)」と確認する。
 2. 承認後、検証専用サブエージェント（`@qa-auditor`）をオーバーソウルアプローチ（`utils/generate_subagent_prompt.py`）で起動して、視覚的突合監査を行わせる。
    - **ミッション・ブリーフ（指示内容）**:
-     - 原本画像パス（`tasks/digital-shift/tmp/images/page_XX.png`）と生文字起こしパス（`tasks/digital-shift/tmp/raw/raw_page_XX.md`）をファイル確認機能で読み込むこと。
+     - 原本画像パス（`tasks/digital-shift/tmp/images/<label>/page_001.png`）と生文字起こしパス（`tasks/digital-shift/tmp/raw/<label>/raw_page_001.md`）を標準のファイル読み込みツールで読み込むこと。
      - 画像上の手書き文字とテキストを照合し、「誤読」「欠落」「勝手な補完（ハルシネーション）」がないかを監査すること。
      - 合否判定（`PASS` / `FAIL`）と指摘事項を出力すること。
 3. `FAIL` の指摘があった場合は、`handwritten-doc-extractor` に修正指示を出して再監査を行い、`PASS` を取得するまで繰り返す。
@@ -91,11 +96,11 @@ flowchart TD
 1. ユーザーに「生文字起こしのPASSを確認しました。構造化Markdownへの成形を開始します。よろしいですか？ (y/n)」と確認する。
 2. 承認後、特化型カスタムサブエージェント（`@handwritten-doc-extractor`）を呼び出し、体系的なMarkdownへ成形させる。
    - **サブエージェントへの指示内容**:
-     - `image_path`: `tasks/digital-shift/tmp/images/page_XX.png`
-     - `output_path`: `tasks/digital-shift/markdown/structured_page_XX.md`
+     - `image_path`: `tasks/digital-shift/tmp/images/<label>/page_001.png`
+     - `output_path`: `tasks/digital-shift/markdown/<label>/structured_page_001.md`
      - `mode`: `"structure"`
-     - 生文字起こしファイル（`raw_page_XX.md`）を参照し、見出し・表・箇条書き・メタデータを付与して成形。
-3. 複数ページを結合して1つのMarkdownにする場合は、`tasks/digital-shift/markdown/output_full.md` に集約する。
+     - 生文字起こしファイル（`raw_page_001.md`）を参照し、見出し・表・箇条書き・メタデータを付与して成形。
+3. 複数ページを結合して1つのMarkdownにする場合は、`tasks/digital-shift/markdown/<label>/output_full.md` に集約する。
 
 ### フェーズ 6: V2 構造化Markdownの最終第三者監査 (qa-auditor)
 1. ユーザーに「検証サブエージェント（`qa-auditor`）による構造化Markdownの最終監査を開始します。よろしいですか？ (y/n)」と確認する。
@@ -104,6 +109,7 @@ flowchart TD
      - 原本の持つ文意・数値が歪められていないか。
      - 見出し階層（H1〜H3）、表組み（GFM Table）、箇条書き構文が正しくレンダリング可能か。
      - 判読不能マーキングが正しく引き継がれているか。
+     - 原本に存在しない情報の創作が含まれていないか。
 3. `PASS` 判定を取得した時点で、最終成果物を確定する。
 
 ### フェーズ 7: 成果物提示とクリーンアップ

@@ -60,6 +60,7 @@ def run_chrome(url: str, profile: Path, extra: list[str], timeout: int) -> str:
     try:
         out, _ = proc.communicate(timeout=timeout)
     except subprocess.TimeoutExpired:
+        # `pg`（プロセスグループ）のIDを取得し、`SIGKILL`（強制終了シグナル）を送ってChromeと子プロセスをまとめて終了させる
         os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
         out, _ = proc.communicate()
     return out or ""
@@ -101,7 +102,8 @@ def screenshot(
 
 
 def page_title(dom: str) -> str:
-    match = re.search(r"<title>(.*?)</title>", dom, re.S)
+    # dom全体から<title>〜</title>に一致する部分を取得する（※`re.DOTALL`で改行含んだ検索設定になる）
+    match = re.search(r"<title>(.*?)</title>", dom, re.DOTALL)
     return match.group(1).strip() if match else ""
 
 
@@ -125,12 +127,13 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    # HTMLファイルの絶対パスを生成
     html = Path(args.html).resolve()
     if not html.is_file():
         print(
             json.dumps(
                 {"ok": False, "error": f"ファイルが見つかりません: {html}"},
-                ensure_ascii=False,
+                ensure_ascii=False,  # アスキー文字の保証を無効化＝日本語をエスケープせずに出力
             )
         )
         return 1
@@ -143,6 +146,7 @@ def main() -> int:
         )
         return 1
 
+    # HTMLファイルの絶対パスを file:// URI に変換する
     url = html.as_uri()
     warnings: list[str] = []
 
@@ -176,6 +180,7 @@ def main() -> int:
                 f"既定の {FALLBACK_WINDOW_HEIGHT}px で撮影したため、末尾が切れていないかスクリーンショットで目視する"
             )
 
+        # shot: スクリーンショットの保存先パスを生成
         shot = html.parent / f"{html.stem}-shot.png"
         screenshot(
             url, profile, args.width, page_height + 40, shot, args.wait, args.timeout
@@ -210,4 +215,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    # main() の戻り値（0/1）はそのままでは exit code に反映されず常に0終了になるため、
+    # sys.exit() に渡してプロセスの終了ステータスとして正しく伝播させる
     sys.exit(main())
