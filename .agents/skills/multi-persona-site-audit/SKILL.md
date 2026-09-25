@@ -87,7 +87,7 @@ description: Playwright系ツール（`playwright-mcp`）で既存の公開サ�
 - ※Phase0 の承認ゲートでページ範囲を確定し、**1ペルソナで13操作超が見込まれる場合は起動前に範囲縮小またはセッション分割を合意しておく**（サブエージェント実行中の中断・多段確認を避ける）。
 
 ### Phase 1: 各ペルソナによるサイト操作（逐次）
-- 各ペルソナを **1体ずつ逐次起動**する（専用のサブエージェント型は無いため汎用的な組み込みサブエージェントを用いる。[`workflow.md`](../../rules/workflow.md) 第2アプローチ準拠）。**常に1ペルソナのみがブラウザを操作** し、開始時にセッションをリセットする（`browser_close` 後の `browser_navigate <開始URL>` 等でセッションをリセット。具体手順は [observation-protocol.md](references/observation-protocol.md) 2）。
+- 各ペルソナを **1体ずつ逐次起動**する（専用のサブエージェント型は無いため汎用的な組み込みサブエージェントを用いる。[`workflow.md`](../../rules/workflow.md) 準拠）。**常に1ペルソナのみがブラウザを操作** し、開始時にセッションをリセットする（`browser_close` 後の `browser_navigate <開始URL>` 等でセッションをリセット。具体手順は [observation-protocol.md](references/observation-protocol.md) 2）。
 - **タスクシナリオ＋観測プロトコル**（[observation-protocol.md](references/observation-protocol.md)）に従って操作し、**証拠（スクリーンショット / DOM / 操作手順 / 詰まった箇所）を持ち帰る**（"感想"でなく"証拠"）。
 - 各サブエージェントへ渡す指令書は [subagent-brief-template.md](references/subagent-brief-template.md) の雛形を用いる（ルール継承漏れ・文脈汚染の防止）。
 - 各サブエージェントは Artifact ログ（`tasks/[サイト名]-audit-report/[CurrentSessionName]_[SubagentName]_ARTIFACTS.md`）に成果物・変更パス・スクリーンショット保存先を追記する。
@@ -99,7 +99,7 @@ description: Playwright系ツール（`playwright-mcp`）で既存の公開サ�
 
 ### Phase 3: 第三者監査（qa-auditor）
 - サブエージェントでの各ペルソナの回答およびメインエージェントによる統合・ドラフト作成後、**必ず独立第三者の `qa-auditor` を用いて第三者チェックを実施**する。
-- 起動時は [`workflow.md`](../../rules/workflow.md) 第1アプローチ（オーバーソウル）に則り、`utils/generate_subagent_prompt.py` を用いて文脈（レポートドラフト、タスク概要など）を注入して起動すること。
+- 起動時は [`workflow.md`](../../rules/workflow.md) に則り、標準のサブエージェント起動ツールで直接起動（例：`TypeName: "qa-auditor"`）し、Prompt 引数に文脈（レポートドラフト、タスク概要など）を構造化して注入して起動すること。
 - `qa-auditor` から「PASS」の判定を受けるまではユーザーへの完了報告（レポートの納品）を行わない。
 
 ### Phase 4: 提供（成果物）

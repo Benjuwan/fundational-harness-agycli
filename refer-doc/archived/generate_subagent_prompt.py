@@ -1,10 +1,19 @@
+# ==============================================================================
+# 【アーカイブ注記】
+# 本スクリプトは、サブエージェント直接起動一本化（オーバーソウル廃止）に伴い、
+# 2026-09-24 に refer-doc/archived/ へ移動・アーカイブ化されました。
+# カスタムサブエージェントのYAMLフロントマター（tools明示指定）による直接起動が
+# 公式仕様として確立されたため、通常の運用では本スクリプトは使用しません。
+# 通常運用で行き詰まりが発生した場合のフォールバック手段、および仕様参照用として保持されています。
+# 詳細は refer-doc/subagent_discovery_issue.md を参照してください。
+# ==============================================================================
+
 import sys
 import os
 import json
-import argparse
+import argparse  # コマンドライン引数を解析するための標準ライブラリ（スクリプト実行時にファイルパスなどの情報を渡せるようになる）
 
-# 許可されたサブエージェントのホワイトリスト。
-# 実際に .agents/agents/ 配下に定義ファイルが存在するものだけを登録する。
+# 許可されたサブエージェントのホワイトリスト
 ALLOWED_SUB_AGENTS = [
     "handwritten-doc-extractor",
     "image-processor",
@@ -14,17 +23,18 @@ ALLOWED_SUB_AGENTS = [
 ]
 
 
-# カスタムサブエージェント起動時に、当該サブエージェントを組み込みサブエージェント（`self`）へオーバーソウル（憑依）させるためのスクリプト。
-# ここで扱う名前は、実際に .agents/agents/ 配下に存在する定義ファイル名と一致させる。
+# カスタムサブエージェント起動時に、当該サブエージェントを組み込みサブエージェント（`self`）へオーバーソウル（憑依）させるためのスクリプト
+# ※このスクリプトが必要となった背景情報は`../subagent_discovery_issue.md`に記載
+# ※フックでは実現困難な理由は`../antigravity-cli-hook-limitation.md`に記載
 def generate_prompt(sub_agent_name, recent_log, user_prompt):
     if sub_agent_name not in ALLOWED_SUB_AGENTS:
         raise ValueError(
             f"サブエージェント `{sub_agent_name}` はスクリプトファイル内のホワイトリストに登録されていません。"
         )
 
-    # プロジェクトルートからの絶対パスとして解決
+    # プロジェクトルートからの絶対パスとして解決（refer-doc/archived/ 配下）
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(script_dir)
+    project_root = os.path.dirname(os.path.dirname(script_dir))
     agent_file_path = os.path.join(
         project_root, ".agents", "agents", f"{sub_agent_name}.md"
     )
@@ -87,7 +97,7 @@ if __name__ == "__main__":
         if os.path.isfile(input_val):
             # パストラバーサル対策：読み込みを許可する基準ディレクトリを設定
             script_dir = os.path.dirname(os.path.abspath(__file__))
-            project_root = os.path.dirname(script_dir)
+            project_root = os.path.dirname(os.path.dirname(script_dir))
             gemini_root = os.path.expanduser("~/.gemini")
 
             # 対象ファイルの絶対パスを取得し、正規化する
