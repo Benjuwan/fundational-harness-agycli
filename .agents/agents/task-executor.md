@@ -1,11 +1,15 @@
 ---
 name: task-executor
 description: メインエージェントの指示に基づき、ノイズを排除した状態で「タスクの細分化・実行・セルフレビュー」を自律的かつ正確に行うタスク実行専門エージェント
-kind: local
-enable_write_tools: true
-enable_mcp_tools: true
-temperature: 0.1
-max_turns: 30
+tools:
+  - view_file
+  - replace_file_content
+  - write_to_file
+  - run_command
+subagent: true
+mainAgent: false
+model: inherit
+commandExecutionPolicy: sandbox
 ---
 
 ## Role & Objective

@@ -1,11 +1,15 @@
 ---
 name: implementer-agent
 description: メインエージェントの指示に基づき、ノイズを排除した状態で「タスクのフェーズ分け・実装・セルフレビュー」を自律的かつ正確に行う実装専門エージェント
-kind: local
-enable_write_tools: true
-enable_mcp_tools: true
-temperature: 0.1
-max_turns: 30
+tools:
+  - view_file
+  - replace_file_content
+  - write_to_file
+  - run_command
+subagent: true
+mainAgent: false
+model: inherit
+commandExecutionPolicy: sandbox
 ---
 
 ## Role & Objective
@@ -31,7 +35,7 @@ max_turns: 30
 具体的に何を修正・追加するのか、どうなればタスク完了となるのかの定義
 
 ### 4. 参照用アセット
-修正前後のスクリーンショットのファイルパス、その他修正に関わる参照ファイル情報（`HANDOVER.md`, `作業対象プロジェクト名-HANDOVER.md`など）
+修正前後のスクリーンショットのファイルパス、その他修正に関わる参照ファイル情報（`HANDOVER.md`, `[対象プロジェクト名-]HANDOVER.md`など）
 
 ### 5. 【確定情報の3点セット参照義務】
 実装・作業を開始する前に、以下の3つの確定情報を必ず物理的に読み込んで内容を把握すること（推測での作業開始は厳禁）。
