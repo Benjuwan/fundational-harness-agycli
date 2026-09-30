@@ -32,6 +32,7 @@ description: 自然言語の指示から BigQuery 用の SQL を自動構築し�
    ```bash
    bq query --use_legacy_sql=false --dry_run --location=<LOCATION> 'SELECT 1'
    ```
+5. **分析テーマのスタートライン提供**: 接続疎通テスト完了後のファーストステップ、またはユーザーから具体的な分析指示（自然言語）がまだない場合は、[insight-prompts.md](references/insight-prompts.md) に整理された「参考プロンプト集」を提示し、ユーザーに「カテゴリから選ぶ」か「自由に指示する」かを尋ねます。カテゴリが選ばれた場合は、該当プロンプトのプレースホルダー（期間・対象イベント名等）をユーザーとの対話で具体化してから Step 2 に進みます。
 
 ### Step 2: 自然言語解析 ＆ ガードレール付き SQL 生成
 ユーザー指示から要求意図（集計期間、指標、軸）を抽出し、以下の**厳格な安全ガードレール**を適用した SQL を生成します。
@@ -113,6 +114,7 @@ description: 自然言語の指示から BigQuery 用の SQL を自動構築し�
    - 保存された（リネーム済み）CSV ファイルへのマークダウン記法でのハイパーリンク
 
 ## 参照ドキュメント
-詳細な GA4 スキーマ、`UNNEST` クエリ例、IAM 権限、Python 変換スクリプト詳細は [bq-analysis-reference.md](references/bq-analysis-reference.md) を参照してください。
+- 詳細な GA4 スキーマ、`UNNEST` クエリ例、IAM 権限、Python 変換スクリプト詳細は [bq-analysis-reference.md](references/bq-analysis-reference.md) を参照してください。
+- 分析観点に迷った際にユーザーへ提示する参考プロンプト集は [insight-prompts.md](references/insight-prompts.md) を参照してください。
 
 </instructions>
