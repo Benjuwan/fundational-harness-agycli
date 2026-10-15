@@ -44,3 +44,4 @@
 
 - **特別な制約事項**: [例: 外部のWeb検索は特定のドメインのみとする、社内用語を使用する]
 - **引き継ぎドキュメント**: [`HANDOVER.md`, `作業対象プロジェクト名-HANDOVER.md`]
+- **Git操作・PR作成時のルール**: Git関連の操作（ブランチ作成・コミット・PR作成）が必要な指示を確認した際は[`git-workflow`スキル](.agents/skills/git-workflow/SKILL.md)を使用すること。
