@@ -1,51 +1,25 @@
 # Antigravity CLI 用の汎用ハーネス
 このリポジトリ（`fundational-harness-agycli`）は、一般ビジネスユーザー（ナレッジワーカー）が日常業務でAIエージェント（[Antigravity CLI](https://antigravity.google/product/antigravity-cli)）を安全かつ効率的に活用するための「汎用的なルール・スキル・サブエージェント」のファイルセット（ハーネス）です。  
-`fundational-harness`という名前の通り、**化粧のファンデーション（下地）と同じように「当リポジトリを下地にして各組織（企業）や各人用にカスタマイズ」してもらう想定**です。ナレッジワーカー層（非エンジニア）がステップバイステップでAI慣れしていく副次効果を期待しているので「原則、HITL（人間の都度確認と承認）のフェールセーフ寄りの設計」になっています。
+`fundational-harness`という名前の通り、**化粧のファンデーション（下地）と同じように「当リポジトリを下地にして各組織（企業）や各人用にカスタマイズ」してもらう想定**です。ナレッジワーカー層（非エンジニア）がステップバイステップでAI慣れしていく副次効果を期待しているので「原則、HITL（人間の都度確認と承認）のフェイルセーフ寄りの設計」になっています。
 
 ---
 
 - [Antigravity CLI 公式ドキュメント](https://antigravity.google/docs/cli/overview)
+  - [Antigravity CLI ダウンロードページ](https://antigravity.google/download#antigravity-cli)（未インストールの場合はこちらからインストール）
 - ※[VS Code](https://code.visualstudio.com/): IDEは任意。必要に応じて
 
 ---
 
 ## クイックスタート（初回セットアップ）
-本ハーネス（リポジトリ）を初めて利用する際は、以下の**1行をコピーしてチャット欄に送信**してください（※AIが当プロジェクトを初めて読み込む場合は本ハーネスの概要説明を実施した後に以下の「### 初回セットアップ手順（AI向けタスクフロー）」に進んでください）。  
-AIが下の「AI向けタスクフロー」を読み取り、環境診断から初期設定までを自律的に進行します。
+本ハーネス（リポジトリ）を初めて利用する際は、事前に [Antigravity CLI ダウンロードページ](https://antigravity.google/download#antigravity-cli) から CLI をインストールした上で、以下の**1行をコピーしてチャット欄に送信**してください（※AIへの指示：当プロジェクトを初めて読み込む場合は、まず本ハーネスの概要説明を実施した上で、[`refer-doc/init-setup-guide.md`](./refer-doc/init-setup-guide.md) の「初回セットアップ手順（AI向けタスクフロー）」に則って初期セットアップを実施するかユーザーに確認してください）。  
+AIが [`refer-doc/init-setup-guide.md`](./refer-doc/init-setup-guide.md) の手順を読み取り、環境診断から初期設定までを自律的に進行します（※手動での設定方法や各設定値の詳細も同ガイドを参照してください）。
 
-> **AIへの送信テキスト（コピーしてチャット欄に貼り付けてください）:**
+> [!NOTE]
+> - **AIへの送信テキスト（コピーしてチャット欄に貼り付けてください）:**  
+> チャット欄（ターミナル画面）の表示及び Antigravity CLI の起動方法 -> `Com/Ctrl + J`でチャット欄を開いて`agy`と入力（※事前に [Antigravity CLI のインストール](https://antigravity.google/download#antigravity-cli)が必要です）
 > ```text
-> README.md の「初回セットアップ手順」を読んで初期設定を実行して
+> ./refer-doc/init-setup-guide.md の「初回セットアップ手順（AI向けタスクフロー）」を読んで初期設定を実行して
 > ```
-
-```markdown
-### 初回セットアップ手順（AI向けタスクフロー）
-この指示を受け取ったAIは、以下のステップを順序通りに実行してください。
-
-1. **ステップ1: 環境診断（Python / Node.js）**
-   - `python --version`（または `python3`）および `node -v`, `npm -v` を実行してインストール状況を確認する。
-   - **未導入のツールがある場合**:
-     - 公式ダウンロードリンク（[Python](https://www.python.org/downloads/) / [Node.js](https://nodejs.org/)）を提示する。
-       - **Windows 環境の場合**: PowerShell で npm / npx スクリプトの実行がブロックされるのを防ぐため、**管理者権限で起動した** PowerShell で `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` を実行する必要がある旨を案内する。（※管理者権限での起動方法も合わせて伝えること）
-     - ユーザーに手動インストールおよびターミナル / CLI の再起動を促し、再起動後に再度上記プロンプトを実行するよう案内して作業を一時停止（待機）する。
-   - **すべて導入済みの場合**: ステップ2へ進む。
-
-2. **ステップ2: 設定ファイルの自律更新（サンドボックスバイパス）**
-   - ユーザーに対し「不可視領域にある設定ファイル（`settings.json` / `hooks.json`）の手動編集ミスを防ぐため、AIが安全に追記・マージします。そのためにサンドボックスバイパスの承認が必要です」と理由を説明し、承認を求める。
-   - ユーザーの承認後、Pythonのインライン処理（`python -c` または `python3 -c`）等をバイパス状態で実行し、既存設定を壊さず安全に辞書マージ（更新）する：
-     - **ホスト設定（`settings.json`）**:
-       - パス: Mac/Linux は `~/.gemini/antigravity-cli/settings.json`、Windows は `%USERPROFILE%\.gemini\antigravity-cli\settings.json`
-       - 推奨される権限設定やステータスライン設定などのキーを安全に追記・更新。（[ステータスライン設定については別ファイルを案内する](./refer-doc/init-setup-guide.md)）
-     - **フック設定（`hooks.json`）**:
-       - パス: Mac/Linux は `~/.gemini/config/hooks.json`、Windows は `%USERPROFILE%\.gemini\config\hooks.json`
-       - 本リポジトリの絶対パスを解決し、`.agents/hooks/` 配下のフック（`pre-invocation-inject.py`, `detect-checkpoint.py`）を登録（詳細は [`hook-setup-guide.md`](./refer-doc/hook-setup-guide.md) 参照）。
-
-3. **ステップ3: テレメトリのオプトアウト案内**
-   - 個人アカウント等での不要な情報送信・学習利用を防ぐため、UI上で `/config` コマンドを実行し、「**Enable Telemetry（テレメトリを有効にする）**」をオフ（無効）にするようユーザーに案内する。
-
-4. **ステップ4: 反映確認とハーネス概要のガイダンス**
-   - 設定の反映結果を報告し、本ハーネスの構成（`GEMINI.md`、ルール、サブエージェント、各種スキル）の全体概要と推奨される使い方を簡潔にガイダンスして完了を報告する。
-```
 
 ## 法人向けプラン（Google Workspace: 組織アカウント経由のGemini）と違って、個人の有料アカウント（Google AI Pro など）ではオプトアウトしても学習利用（情報漏えい）のリスクがある
 仕事用・学校用のGoogleアカウント（Workspace）経由で使う場合は個人向けとは別の規約が適用され、法人向けプランはデフォルトで入力データが外部の生成AIモデル学習に使われない（オプトアウト設定）運用になっており、人間のレビュアーによる監視も行われません。  
