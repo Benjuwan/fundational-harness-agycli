@@ -53,7 +53,7 @@ def main():
                     "ephemeralMessage": (
                         "CRITICAL RULE: Before executing a command such as “run_command” or “invoke_subagent,” or before calling a subagent, "
                         "you MUST output a clear explanation of your intended action in Japanese text. "
-                        "Silent tool calls are strictly forbidden and will be blocked.\n"
+                        "Silent tool calls are strictly forbidden.\n"
                         "And be sure to follow the rules (Workflow Rules) below.\n"
                         f"[HOOK INJECTION] Workflow Rules:\n\n{content}"
                     )

@@ -52,10 +52,11 @@ grill（厳しく尋問するという意味らしい）という名前のとお
 
 ### フック（`.agents/hooks`）: 
 特定フェーズ時に発動するシステム制約。これにより自動的に発動する機能を付与したり、AI制御を実現できたりする。  
-※フックの設定に関しては[`hook-setup-guide.md`](./refer-doc/hook-setup-guide.md)に詳細を記載しています。本リポジトリのフック（`.agents/hooks`）を設定する場合（初期設定時）は、AIに「`./refer-doc/hook-setup-guide.md`を参照して`.agents/hooks`内にある各種フックの設定を行って」とプロンプト入力すれば済むと思います。
+※同梱のフック（`.agents/hooks`）は `.agents/hooks.json` で登録済みです。自作のフックを追加する場合は [`hook-setup-guide.md`](./refer-doc/hook-setup-guide.md) を参照してください。
 
-> [!NOTE]
+> [!CAUTION]
 > 各種フックはPythonスクリプトなので[Download Python | Python.org](https://www.python.org/downloads/)からPythonをインストールしてください。
+> - `.agents/hooks.json` の実行コマンドは Mac / Linux 用の `python3` です。**Windows OS では `python` に書き換えて**ください（例：`"command": "python ./hooks/pre-invocation-inject.py"`）。
 
 ### MCP（`.agents/mcp_config.json`）: 
 AIと外部サービスをつないで、AIの対応範囲を拡張するための規格（仕組み）。
