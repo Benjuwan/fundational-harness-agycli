@@ -71,7 +71,7 @@ AIは自身で作成・修正したコードに対して【確証バイアス】
 ※AIによる `HANDOVER.md`, `[対象プロジェクト名-]HANDOVER.md` の**自律的な編集は禁止**する。必ずユーザーの承認を得てから編集（スキル実行）すること。
 
 > [!NOTE]
-> - 短期的なタスク・進捗管理は `tasks/[CurrentSessionName]_task.md` に記録する
+> - 短期的なタスク・進捗管理は `tasks/tmp/[CurrentSessionName]_task.md` に記録する
 > - 作業を通じて得られた業務上の知見やルール、2回以上受けた同じ指摘は `tasks/lessons.md` に記録する
 
 ## 6. 軽微な修正時の例外（自律対応）
