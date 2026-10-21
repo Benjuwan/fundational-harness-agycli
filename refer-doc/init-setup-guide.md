@@ -23,14 +23,11 @@
    - **すべて導入済みの場合**: ステップ2へ進む。
 
 2. **ステップ2: 設定ファイルの自律更新（サンドボックスバイパス）**
-   - ユーザーに対し「不可視領域にある設定ファイル（`settings.json` / `hooks.json`）の手動編集ミスを防ぐため、AIが安全に追記・マージします。そのためにサンドボックスバイパスの承認が必要です」と理由を説明し、承認を求める。
+   - ユーザーに対し「不可視領域にある設定ファイル（`settings.json`）の手動編集ミスを防ぐため、AIが安全に追記・マージします。そのためにサンドボックスバイパスの承認が必要です」と理由を説明し、承認を求める。
    - ユーザーの承認後、Pythonのインライン処理（`python -c` または `python3 -c`）等をバイパス状態で実行し、既存設定を壊さず安全に辞書マージ（更新）する：
      - **ホスト設定（`settings.json`）**:
        - パス: Mac/Linux は `~/.gemini/antigravity-cli/settings.json`、Windows は `%USERPROFILE%\.gemini\antigravity-cli\settings.json`
        - 本ガイドの「[3. ステップ2: 必須初期設定 > (1) 行動制御・サンドボックス設定 (`settings.json`)](#1-行動制御サンドボックス設定-settingsjson)」に記載されている推奨設定（`permissions` 等、パスは現在のOS・プロジェクトの絶対パスに変換）を安全に追記・更新する。（※ステータスライン設定やキーバインド設定の詳細は「[6. 補足](#6-補足)」を参照するよう案内する）
-     - **フック設定（`hooks.json`）**:
-       - パス: Mac/Linux は `~/.gemini/config/hooks.json`、Windows は `%USERPROFILE%\.gemini\config\hooks.json`
-       - 本リポジトリの絶対パスを解決し、`.agents/hooks/` 配下のフック（`pre-invocation-inject.py`, `detect-checkpoint.py`）を登録（詳細は [`hook-setup-guide.md`](./hook-setup-guide.md) 参照）。
 
 3. **ステップ3: テレメトリのオプトアウト案内**
    - 個人アカウント等での不要な情報送信・学習利用を防ぐため、UI上で `/config` コマンドを実行し、「**Enable Telemetry（テレメトリを有効にする）**」をオフ（無効）にするようユーザーに案内する（詳細は「[4. ステップ3: セキュリティ・オプトアウト（学習拒否）・利用枠設定](#4-ステップ3-セキュリティオプトアウト学習拒否利用枠設定)」参照）。
@@ -85,12 +82,11 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
     ],
     "deny": [
       "command(sudo)",
-      "command(sudo .*)",
-      "command(rm -rf.*)",
-      "command(rm -fr.*)",
-      "command(git push.*)",
-      "command(git reset --hard.*)",
-      "command(git clean.*)",
+      "command(rm -rf)",
+      "command(rm -fr)",
+      "command(git push)",
+      "command(git reset --hard)",
+      "command(git clean)",
       "command(git checkout .)",
       "command(git restore .)",
       "read_file(C:/Users/ユーザー名/.ssh)",
@@ -106,8 +102,11 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
     ],
     "ask": [
       "unsandboxed(*)",
-      "command(rm -r.*)",
-      "command(rmdir .*)"
+      "command(rm)",
+      "command(rmdir)",
+      "command(Remove-Item)",
+      "command(del)",
+      "command(rd)"
     ]
   },
   "runningLightSpeed": "fast",
@@ -190,7 +189,7 @@ AIが起動時に真っ先に読み込む最上位の規範（システムプロ
     ├── rules/        ← ルールファイル群（作業手順・安全制約・品質規定）
     ├── skills/       ← スキル群（定型業務のナレッジと実行手順）
     ├── hooks/        ← フック用スクリプト群（自動検証・制御コード）
-    ├── hooks.json    ← フック設定ファイル（※ローカル参照用）
+    ├── hooks.json    ← フック設定ファイル（ワークスペース単位。同梱済み）
     └── mcp_config.json ← MCP設定ファイル
 ```
 
@@ -259,7 +258,6 @@ APIキーの漏洩による予期せぬ課金トラブルを防止するため�
 | **`handover`** | 会話の区切りや作業中断時に、次回チャットに引き継ぐ `HANDOVER.md` を自動整理。 |
 | **`multi-persona-site-audit`** | 実サイトを複数のペルソナ視点で監査し、改善仮説と優先度付けを支援。 |
 | **`presentation-slider-creator`** | テキストやドキュメントから Marp 形式のプレゼンスライドを自動生成。 |
-| **`web-research-summarizer`** | 指定されたテーマに基づき、Web上の最新情報を検索・取得・構造化要約。 |
 
 ### (3) サブエージェント一覧 (`.agents/agents/`)
 
@@ -273,7 +271,7 @@ APIキーの漏洩による予期せぬ課金トラブルを防止するため�
 
 > [!NOTE]
 > **サブエージェント起動の仕様（公式仕様準拠・直接起動一本化）**
-> 各サブエージェント定義ファイル（`.agents/agents/*.md`）のフロントマターにおいて、公式仕様に準拠して `tools: [view_file, replace_file_content, ...]` と利用ツールを明示列挙することで、`invoke_subagent` の `TypeName`（例: `TypeName: "implementer-agent"`）で **直接起動** して必要なツールが正常に付与されます。旧来のオーバーソウルアプローチ（`self` へのプロンプト憑依）は廃止されました。詳細な手順については [**AIハーネス構築・カスタマイズガイド**](./harness-customization-guide.md) を参照してください。
+> 各サブエージェント定義ファイル（`.agents/agents/*.md`）のフロントマターにおいて、公式仕様に準拠して `tools: [view_file, replace_file_content, ...]` と利用ツールを明示列挙することで、`invoke_subagent` の `TypeName`（例: `TypeName: "implementer-agent"`）で **直接起動** して必要なツールが正常に付与されます。旧来のオーバーソウルアプローチ（`self` へのプロンプト憑依）は廃止されました。詳細な経緯については [**サブエージェント認識およびツール制限の仕様と本プロジェクトの対応**](./subagent_discovery_issue.md) を参照してください。
 
 ## 6. 補足
 

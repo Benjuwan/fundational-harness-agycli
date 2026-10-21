@@ -14,32 +14,31 @@ Antigravity CLI の実行ループ（モデル呼び出し前、ツール実行�
 | **`detect-checkpoint.py`** | `PreInvocation` (プロンプト送信直前) | 会話ログからコンテキスト圧縮を検知し、ユーザーへ新しいセッション（チャット）への引き継ぎ切替を促す警告を出力します。 |
 | **`checkpoint_utils.py`** | - | 会話ログ管理を行う共通ユーティリティ（上記スクリプトから参照）。 |
 
-## 2. フックの登録手順（推奨: CLIからの設定）
+## 2. フックの登録（ワークスペース設定 `.agents/hooks.json`）
+同梱スクリプトは、ワークスペース設定の **`.agents/hooks.json`** で登録済みです（同梱済み）。  
+フック実行時の作業ディレクトリは `hooks.json` のあるディレクトリ（`.agents/`）になるため、スクリプトは **`./hooks/...` の相対パス** で指定しています。
+
+- **Mac / Linux**: `python3 ./hooks/スクリプト名.py`（同梱の設定のまま使えます）
+- **Windows**: `python ./hooks/スクリプト名.py`（`.agents/hooks.json` の `python3` を `python` に書き換えてください）
 
 > [!NOTE]
 > このドキュメントをAIに参照させて「希望する機能（フック）が実現可能かどうかを判断及び、スクリプトの作成から登録までを任せる」と良いでしょう。  
-> スクリプトを作成して手動設定する場合は、以下の手順で登録してください。
+> 自作のフックを追加する場合は、スクリプトを `.agents/hooks/` に置き、`.agents/hooks.json` に追記してください。CLIを再起動することで、設定が有効化されます。
 
-1. チャットUIまたはターミナルで **`/hooks`** コマンドを実行します。
-2. 登録したいイベント（`PreToolUse` または `PreInvocation`）を選択します。
-3. 名称（Name）と実行コマンド（Command）を入力します。
-   - **実行コマンドの指定例**:
-     - **Mac / Linux**: `python3 /絶対パス/.agents/hooks/スクリプト名.py`
-     - **Windows**: `python C:/絶対パス/.agents/hooks/スクリプト名.py`
-4. CLIを再起動することで、設定が有効化されます。
-
-## 3. （参考）設定ファイル（`hooks.json`）による一括設定 = 作ったHookの有効化
-一括で設定したい場合や設定内容を直接確認したい場合は**グローバルの `hooks.json`**を編集します。
+## 3. （参考）設定ファイル（`hooks.json`）の配置場所と優先順位
+`hooks.json` のトップレベルのキーはフック名で、その中にイベント（`PreInvocation` など）を記述します。
 
 > [!IMPORTANT]
-> - **設定ファイル（`hooks.json`）の配置場所**  
-> プロジェクト内の `.agents/hooks.json` ではなく、**OSユーザーディレクトリ配下のグローバル設定ファイル**に記述する必要があります。
-> - **Windows**: `C:/Users/ユーザー名/.gemini/config/hooks.json`
-> - **Mac / Linux**: `/Users/ユーザー名/.gemini/config/hooks.json`
+> - **配置場所**: ワークスペースの `.agents/hooks.json`（本リポジトリ標準）と、グローバル設定の両方に対応しています。
+>   - **グローバル（Windows）**: `C:/Users/ユーザー名/.gemini/config/hooks.json`
+>   - **グローバル（Mac / Linux）**: `/Users/ユーザー名/.gemini/config/hooks.json`
+> - **グローバル設定の場合**: 作業ディレクトリが `~/.gemini/config/` になるため、スクリプトは **絶対パス** で指定します（例：`python3 /絶対パス/.agents/hooks/スクリプト名.py`、Windows は `python C:/絶対パス/.agents/hooks/スクリプト名.py`）。
+> - **同名のフック**: ワークスペースとグローバルで同じ名前のフックがある場合は、**ワークスペース側が優先** されます（別名のフックはマージされて順に実行されます）。
+> - ※旧版のCLIでは、フォルダを信頼したあとにワークスペースの `.agents/hooks.json` が読み込まれない不具合がありました（公式の変更履歴で修正済み）。
 
 <details>
-<summary><b><code>hooks.json</code> 設定テンプレート（クリックで展開）</b></summary>
-※ Windows 環境の場合は `python3` を `python` に変更し、パスを `C:/Users/...` 形式に置き換えてください。
+<summary><b>同梱の <code>.agents/hooks.json</code> の内容（クリックで展開）</b></summary>
+※ Windows 環境の場合は `python3` を `python` に変更してください。
 
 ```json
 {
@@ -47,7 +46,7 @@ Antigravity CLI の実行ループ（モデル呼び出し前、ツール実行�
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python3 /絶対パス/.agents/hooks/pre-invocation-inject.py",
+        "command": "python3 ./hooks/pre-invocation-inject.py",
         "timeout": 5
       }
     ]
@@ -56,7 +55,7 @@ Antigravity CLI の実行ループ（モデル呼び出し前、ツール実行�
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python3 /絶対パス/.agents/hooks/detect-checkpoint.py",
+        "command": "python3 ./hooks/detect-checkpoint.py",
         "timeout": 5
       }
     ]
