@@ -74,6 +74,7 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "command(npm run .*)",
       "command(git diff)",
       "command(git status)",
+      "command(git log)",
       "read_file(C:/Users/ユーザー名/Desktop/プロジェクト名/)",
       "write_file(C:/Users/ユーザー名/Desktop/プロジェクト名/)",
       "command(regex:python tasks/.*)",
@@ -101,12 +102,18 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "write_file(C:/Users/ユーザー名/Desktop/プロジェクト名/.dev.vars)"
     ],
     "ask": [
-      "unsandboxed(*)",
       "command(rm)",
       "command(rmdir)",
       "command(Remove-Item)",
       "command(del)",
-      "command(rd)"
+      "command(rd)",
+      "command(git worktree)",
+      "command(git rebase)",
+      "command(git checkout --)",
+      "command(git stash drop)",
+      "command(git stash clear)",
+      "command(git branch -D)",
+      "command(git branch -d)"
     ]
   },
   "runningLightSpeed": "fast",
@@ -309,7 +316,6 @@ Antigravity CLI 利用時のキーバインド設定ファイルです。
 > - **対処法**: VSCode の `settings.json`（ワークスペースの `.vscode/settings.json` または `Ctrl+Shift+P` → `Preferences: Open User Settings (JSON)`）に以下を追記し、ウィンドウを再読み込みしてください。
 >   ```json
 >   {
->     "terminal.integrated.sendKeybindingsToShell": true,
 >     "terminal.integrated.allowChords": false
 >   }
 >   ```
