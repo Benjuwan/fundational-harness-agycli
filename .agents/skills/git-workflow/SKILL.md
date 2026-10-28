@@ -226,4 +226,17 @@ closes #<issue番号>
 - コメントアウトされたコードが残っていないか確認する
 ```
 
+## 4. マージ後のローカル後処理
+マージ（ユーザーが GitHub の GUI で実施）の完了報告を受けたら、`gh pr view <PR番号> --json state,mergedAt` で確認し、承認を得てから実行する。
+
+```bash
+git switch <デフォルトブランチ>
+git pull origin <デフォルトブランチ>
+git branch -d <ブランチ名>
+```
+
+- `git branch -d` が「未マージ」として拒否した場合（squash / rebase マージ等）は、`-D` に切り替えずに停止して確認する。
+- サンドボックスで `git pull` が失敗した場合は、回避策を試さず、ユーザーに `! git pull origin <デフォルトブランチ>` の実行を依頼する。
+- サンドボックスで `.git/config` の更新に失敗した場合（`could not lock config file`）、ブランチ自体は削除されるが、`branch.<ブランチ名>.*` の設定が残る。ユーザーに `! git config --remove-section branch.<ブランチ名>` と `! git fetch --prune` の実行を依頼する。
+
 </instructions>
