@@ -8,11 +8,11 @@
       }
     ]
   },
-  "detect-checkpoint": {
+  "checkpoint-alert-inject": {
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python3 ./hooks/detect-checkpoint.py",
+        "command": "python3 ./hooks/checkpoint-alert-inject.py",
         "timeout": 5
       }
     ]

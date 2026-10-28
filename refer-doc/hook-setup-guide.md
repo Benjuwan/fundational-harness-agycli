@@ -11,7 +11,7 @@ Antigravity CLI の実行ループ（モデル呼び出し前、ツール実行�
 | スクリプト名 | タイミング (イベント) | 目的・機能 |
 | :--- | :--- | :--- |
 | **`pre-invocation-inject.py`** | `PreInvocation` (プロンプト送信直前) | コンテキストの自動圧縮発生時に、`workflow.md` などの最優先ルールをプロンプト直前に動的再注入し、ルールの形骸化を防ぎます。 |
-| **`detect-checkpoint.py`** | `PreInvocation` (プロンプト送信直前) | 会話ログからコンテキスト圧縮を検知し、ユーザーへ新しいセッション（チャット）への引き継ぎ切替を促す警告を出力します。 |
+| **`checkpoint-alert-inject.py`** | `PreInvocation` (プロンプト送信直前) | 会話ログからコンテキスト圧縮を検知し、ユーザーへ新しいセッション（チャット）への引き継ぎ切替を促す警告を出力します。 |
 | **`checkpoint_utils.py`** | - | 会話ログ管理を行う共通ユーティリティ（上記スクリプトから参照）。 |
 
 ## 2. フックの登録（ワークスペース設定 `.agents/hooks.json`）
@@ -51,11 +51,11 @@ Antigravity CLI の実行ループ（モデル呼び出し前、ツール実行�
       }
     ]
   },
-  "detect-checkpoint": {
+  "checkpoint-alert-inject": {
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python3 ./hooks/detect-checkpoint.py",
+        "command": "python3 ./hooks/checkpoint-alert-inject.py",
         "timeout": 5
       }
     ]
