@@ -70,8 +70,8 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
     "allow": [
       "mcp(context7/*)",
       "mcp(playwright/*)",
-      "command(npm test.*)",
-      "command(npm run .*)",
+      "command(npm test)",
+      "command(npm run)",
       "command(git diff)",
       "command(git status)",
       "command(git log)",
