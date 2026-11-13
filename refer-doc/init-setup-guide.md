@@ -90,6 +90,7 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "command(git clean)",
       "command(git checkout .)",
       "command(git restore .)",
+      "command(gh repo delete)",
       "read_file(C:/Users/ユーザー名/.ssh)",
       "read_file(C:/Users/ユーザー名/.aws)",
       "read_file(C:/Users/ユーザー名/.gnupg)",
