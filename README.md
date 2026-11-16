@@ -11,8 +11,8 @@
 ---
 
 ## クイックスタート（初回セットアップ）
-本ハーネス（リポジトリ）を初めて利用する際は、事前に [Antigravity CLI ダウンロードページ](https://antigravity.google/download#antigravity-cli) から CLI をインストールした上で、以下の**1行をコピーしてチャット欄に送信**してください（※AIへの指示：当プロジェクトを初めて読み込む場合は、まず本ハーネスの概要説明を実施した上で、[`refer-doc/init-setup-guide.md`](./refer-doc/init-setup-guide.md) の「初回セットアップ手順（AI向けタスクフロー）」に則って初期セットアップを実施するかユーザーに確認してください）。  
-AIが [`refer-doc/init-setup-guide.md`](./refer-doc/init-setup-guide.md) の手順を読み取り、環境診断から初期設定までを自律的に進行します（※手動での設定方法や各設定値の詳細も同ガイドを参照してください）。
+本ハーネス（リポジトリ）を初めて利用する際は、事前に [Antigravity CLI ダウンロードページ](https://antigravity.google/download#antigravity-cli) から CLI をインストールした上で、以下の**1行をコピーしてチャット欄に送信**してください。  
+AIが [`refer-doc/init-setup-guide.md`](./refer-doc/init-setup-guide.md) の手順を読み取り、環境診断から初期設定の手順案内・設定用コードの生成までを対話形式でナビゲートします（※セキュリティ仕様上、ホスト設定ファイルの保存やCLI再起動などはAIの案内に沿ってユーザー自身が実施します。手動での設定方法や各設定値の詳細も同ガイドを参照してください）。
 
 > [!NOTE]
 > - **AIへの送信テキスト（コピーしてチャット欄に貼り付けてください）:**  
