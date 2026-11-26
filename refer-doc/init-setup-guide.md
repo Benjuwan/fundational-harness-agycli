@@ -119,7 +119,9 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
       "command(git stash drop)",
       "command(git stash clear)",
       "command(git branch -D)",
-      "command(git branch -d)"
+      "command(git branch -d)",
+      "command(gh pr create)",
+      "command(gh pr merge)"
     ]
   },
   "runningLightSpeed": "fast",
@@ -132,6 +134,7 @@ AIによる不必要なコマンド実行や取り返しのつかないファイ
 > **権限設定 (`permissions`) の考え方**
 > - **`allow`**: ユーザーの都度確認なしでAIが自律実行できる安全なコマンドを指定します。
 > - **`deny`**: ユーザーが指示や承認を出した場合でも、**AIに実行を固く禁止（ガード）するコマンド**を指定します。
+> - **`ask`**: AIが実行する前に、**必ずユーザーの承認を求めるコマンド**を指定します（優先順位は `deny` > `ask` > `allow`）。削除系や履歴を書き換える `git` 操作に加え、外部へ公開される PR の作成・マージ（`gh pr create` / `gh pr merge`）も対象にしています。`toolPermission: proceed-in-sandbox` ではサンドボックス内のコマンドが確認なしで実行されうるため、`ask` に入れておくことで確実に承認を挟めます。
 > - ※`git`などエンジニア向け関連の記述が一部含まれているのは将来の拡張性を加味してです。
 
 > [!TIP]
